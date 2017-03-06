@@ -18,10 +18,10 @@
     }
   }, 2000);
 
-	/**
+  /**
    * Got this function from:
-	 * http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
-	 */
+   * http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+   */
   function eventFire(el, etype){
     if (el.fireEvent) {
       el.fireEvent('on' + etype);
