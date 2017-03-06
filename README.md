@@ -5,3 +5,6 @@ This is basically useful when you are watching a youtube video (or a playlist), 
 
 Download the extension for chrome here:
 https://drive.google.com/file/d/0B4fiiIyzR7DSRHpHOG81VDlTa2c/view?usp=sharing
+
+Download the extension for firefox here:
+https://drive.google.com/file/d/0B4fiiIyzR7DSOEpGWkxtVzVTb0U/view?usp=sharing
