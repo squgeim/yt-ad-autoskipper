@@ -1,21 +1,21 @@
 {
-	"name":"Youtube Ad Auto-skipper",
+  "name":"Youtube Ad Auto-skipper",
   "short_name": "Youtube Ad Auto-skipper",
-	"description":"Youtube Ad Skipper is an extension that auto skips ads after youtube provides a skip ad button. It does not block an ad.",
-	"manifest_version": 2,
-	"version":"0.1",
+  "description":"Youtube Ad Skipper is an extension that auto skips ads after youtube provides a skip ad button. It does not block an ad.",
+  "manifest_version": 2,
+  "version":"0.1",
   "author":"Shreya Dahal",
   "developer": {
     "name": "Shreya Dahal",
     "url": "https://squgeim.github.io"
   },
   "homepage_url": "https://github.com/squgeim/yt-ad-autoskipper",
-	"content_scripts":[
-		{
-			"matches": ["*://*.youtube.com/*"],
-			"js":["skipad.js"],
+  "content_scripts":[
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js":["skipad.js"],
       "run_at": "document_end",
       "all_frames": true
-		}
-	]
+    }
+  ]
 }
