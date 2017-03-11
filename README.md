@@ -8,9 +8,12 @@ This is basically useful when you are watching a youtube video (or a playlist), 
 ### Chrome
 You will need to install the chrome extension manually. Instructions [here](https://www.cnet.com/how-to/how-to-install-chrome-extensions-manually).
 
-[Unpacked ZIP file](https://drive.google.com/open?id=0B4fiiIyzR7DSTFV3WkZyVDItMXc)
+[Unpacked ZIP file](https://drive.google.com/open?id=0B4fiiIyzR7DSTFV3WkZyVDItMXc) 
 
 [Packed CRX file](https://drive.google.com/open?id=0B4fiiIyzR7DSRHpHOG81VDlTa2c)
 
 ### Firefox
+[Get it from Firefox Addon Marketplace](https://addons.mozilla.org/en-US/firefox/addon/youtube-ad-auto-skipper/)
+
+Or, if you want to do it manually:
 [Signed XPI file](https://drive.google.com/open?id=0B4fiiIyzR7DSOEpGWkxtVzVTb0U)
