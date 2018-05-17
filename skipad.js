@@ -12,7 +12,7 @@
     if (window.location.pathname !== '/watch') {
       return;
     }
-    var skipButton = document.querySelector('button.videoAdUiSkipButton');
+    var skipButton = document.getElementsByClassName('videoAdUiSkipButton')[0];
     if (skipButton) {
       eventFire(skipButton, 'click');
     }
