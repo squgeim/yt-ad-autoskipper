@@ -1,4 +1,4 @@
-;(function() {
+; (function () {
 
   /**
    * This function checks if the current page has a skip ad button
@@ -8,21 +8,25 @@
    * The interval period of 2 seconds is arbitary, but I guess 2sec
    * is a good choice.
    */
-  var timeout = setInterval(function() {
+  var timeout = setInterval(function () {
     if (window.location.pathname !== '/watch') {
       return;
     }
-    var skipButton = document.getElementsByClassName('videoAdUiSkipButton')[0];
+    var skipButton = document.getElementsByClassName('ytp-ad-skip-button ytp-button')[0];
+    var overlayCloseButton = document.getElementsByClassName('ytp-ad-overlay-close-button')[0];
     if (skipButton) {
       eventFire(skipButton, 'click');
     }
-  }, 2000);
+    if (overlayCloseButton) {
+      eventFire(overlayCloseButton, 'click');
+    }
+  }, 1000);
 
   /**
    * Got this function from:
    * http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
    */
-  function eventFire(el, etype){
+  function eventFire(el, etype) {
     if (el.fireEvent) {
       el.fireEvent('on' + etype);
     } else {
