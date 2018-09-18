@@ -13,8 +13,12 @@
       return;
     }
     var skipButton = document.getElementsByClassName('ytp-ad-skip-button ytp-button')[0];
+    var overlayCloseButton = document.getElementsByClassName('ytp-ad-overlay-close-button')[0];
     if (skipButton) {
       eventFire(skipButton, 'click');
+    }
+    if (overlayCloseButton) {
+      eventFire(overlayCloseButton, 'click');
     }
   }, 1000);
 
