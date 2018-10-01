@@ -1,4 +1,4 @@
-;(function() {
+(function () {
   var classList = [
     'videoAdUiSkipButton', // Old close ad button
     'ytp-ad-skip-button ytp-button', // New close ad button
@@ -19,7 +19,7 @@
    * The interval period of 2 seconds is arbitary, but I guess 2sec
    * is a good choice.
    */
-  var timeout = setInterval(function() {
+  var timeout = setInterval(function () {
     if (window.location.pathname !== '/watch') {
       return;
     }
@@ -35,7 +35,7 @@
    * Got this function from:
    * http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
    */
-  function eventFire(el, etype){
+  function eventFire(el, etype) {
     if (el.fireEvent) {
       el.fireEvent('on' + etype);
     } else {
