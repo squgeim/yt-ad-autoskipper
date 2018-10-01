@@ -1,4 +1,15 @@
 ;(function() {
+  var classList = [
+    'videoAdUiSkipButton', // Old close ad button
+    'ytp-ad-skip-button ytp-button', // New close ad button
+    'ytp-ad-overlay-close-button', // Close overlay button
+  ];
+
+  function existingButtons(classNames) {
+    return classNames.map(name => {
+      return document.getElementsByClassName(name)[0];
+    }).filter(v => v);
+  }
 
   /**
    * This function checks if the current page has a skip ad button
@@ -12,10 +23,12 @@
     if (window.location.pathname !== '/watch') {
       return;
     }
-    var skipButton = document.getElementsByClassName('videoAdUiSkipButton')[0];
-    if (skipButton) {
-      eventFire(skipButton, 'click');
-    }
+
+    // Trigger the `click` event on all the buttons in the list that are
+    // present in the page.
+    existingButtons(classList).forEach(button => {
+      eventFire(button, 'click');
+    })
   }, 2000);
 
   /**
@@ -33,4 +46,3 @@
   }
 
 })();
-
