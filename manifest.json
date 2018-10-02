@@ -9,6 +9,7 @@
   "content_scripts":[
     {
       "matches": ["*://*.youtube.com/*"],
+      "include_globs": ["*watch\/*"],
       "js":["skipad.js"],
       "run_at": "document_end",
       "all_frames": true
