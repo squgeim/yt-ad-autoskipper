@@ -4,6 +4,7 @@
     'ytp-ad-skip-button ytp-button', // New close ad button
     'ytp-ad-overlay-close-button', // Close overlay button
   ];
+  var muteButton = document.querySelector('button.ytp-mute-button');
 
   function existingButtons(classNames) {
     return classNames.map(name => {
@@ -23,12 +24,21 @@
     if (window.location.pathname !== '/watch') {
       return;
     }
-
+    var isMuted = false;
     // Trigger the `click` event on all the buttons in the list that are
     // present in the page.
-    existingButtons(classList).forEach(button => {
-      eventFire(button, 'click');
-    })
+    var skipButtons = existingButtons(classList);
+    if (skipButtons.length > 0) {
+      skipButtons.forEach(button => {
+        eventFire(button, 'click');
+        if (isMuted === false) {
+          eventFire(muteButton, 'click');
+          isMuted = true;
+        }
+      });
+    } else {
+      isMuted = false;
+    }
   }, 2000);
 
   /**
