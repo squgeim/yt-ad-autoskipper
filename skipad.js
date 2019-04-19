@@ -14,7 +14,7 @@
     }
     var isMuted = false;
     var muteButton = document.querySelector('button.ytp-mute-button');
-    var skipButton = document.querySelector('button.videoAdUiSkipButton');
+    var skipButton = document.querySelector('button.ytp-ad-skip-button');
     if (skipButton) {
       eventFire(skipButton, 'click');
       if (isMuted === false) {
@@ -23,7 +23,6 @@
       }
     } else {
       // If video was skipped, unmute it
-      eventFire(muteButton, 'click');
       isMuted = false;
     }
   }, 2000);
