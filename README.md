@@ -13,3 +13,7 @@ This is useful when you are watching a YouTube video (or a playlist), and an ad 
 ### Firefox
 
 [Get it from Firefox Addon Marketplace](https://addons.mozilla.org/en-US/firefox/addon/youtube-ad-auto-skipper/)
+
+---
+
+If you this this extension has made your YouTube experience better, care to buy me a coffee? [You can donate whatever you want.](https://paypal.me/squgeim)
