@@ -29,6 +29,13 @@
     existingButtons(classList).forEach(button => {
       eventFire(button, 'click');
     })
+
+    // Keep Watching..
+    let keepWatch = document.getElementById('confirm-button');
+    if(keepWatch !== null){
+      eventFire(keepWatch, 'click');
+    }
+
   }, 2000);
 
   /**
