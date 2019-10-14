@@ -110,5 +110,27 @@
     }, 2000);
   }
 
-  initTimeout();
+  /**
+   * Check if we are running in an iframe. We do that by checking if our current
+   * window is the same as the top parent window. The try..catch is there because
+   * some browsers will not let a script in an iframe access the parent window.
+   */
+  var inIframe = (function() {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      // The browser did not let us access the parent window. Still means we are
+      // in an iframe.
+      return true;
+    }
+  })();
+
+  /**
+   * Only start the script if we are in the top level. YouTube has a few iframes
+   * in the page which would also be running this content script.
+   */
+  if (!inIframe) {
+    // main:
+    initTimeout();
+  }
 })();
