@@ -5,6 +5,13 @@
     'ytp-ad-overlay-close-button', // Close overlay button
   ];
 
+  /**
+   * Loops over all the class names of buttons that we need to click to skip an
+   * ad or overlay and returns an array of those elements.
+   * 
+   * @param {Array<String>} classNames - an array of class names of button that we need to click
+   * @returns {Array<Element>} - An arry of DOM elements
+   */
   function existingButtons(classNames) {
     return classNames.map(name => {
       return document.getElementsByClassName(name)[0];
@@ -12,25 +19,39 @@
   }
 
   /**
-   * This function checks if the current page has a skip ad button
-   * available yet. If it has the button, a click event is fired on
-   * the button. If no such button is found, then we do nothing.
-   * The interval period of 2 seconds is arbitary, but I guess 2sec
-   * is a good choice.
+   * Loops over all the buttons that need to be clicked and triggers the click
+   * even on those buttons.
    */
-  var timeout = setInterval(function () {
-    // Trigger the `click` event on all the buttons in the list that are
-    // present in the page.
+  function checkAndClickButtons() {
     existingButtons(classList).forEach(button => {
-      eventFire(button, 'click');
+      triggerClick(button);
     })
-  }, 2000);
+  }
 
   /**
-   * Got this function from:
-   * http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+   * Starts the poll to see if any of the ad buttons are present in the page now.
+   * 
+   * The interval of 2 seconds is arbitrary. I guess it's a good compromise.
    */
-  function eventFire(el, etype) {
+  function initTimeout() {
+    setTimeout(function() {
+      checkAndClickButtons();
+
+      initTimeout();
+    }, 2000);
+  }
+
+  /**
+   * Triggers a click event on the given DOM element.
+   * 
+   * This function is based on an answer here:
+   * http://stackoverflow.com/questions/2705583/how-to-simulate-a-click-with-javascript
+   * 
+   * @param {Element} el - The element on which to trigger the event
+   */
+  function triggerClick(el) {
+    var etype = 'click';
+
     if (el.fireEvent) {
       el.fireEvent('on' + etype);
     } else {
@@ -40,4 +61,6 @@
     }
   }
 
+  // Start polling:
+  initTimeout();
 })();
