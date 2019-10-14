@@ -8,7 +8,7 @@
   /**
    * Loops over all the class names of buttons that we need to click to skip an
    * ad or overlay and returns an array of those elements.
-   * 
+   *
    * @param {Array<String>} classNames - an array of class names of button that we need to click
    * @returns {Array<Element>} - An arry of DOM elements
    */
@@ -29,19 +29,6 @@
   }
 
   /**
-   * Starts the poll to see if any of the ad buttons are present in the page now.
-   * 
-   * The interval of 2 seconds is arbitrary. I guess it's a good compromise.
-   */
-  function initTimeout() {
-    setTimeout(function() {
-      checkAndClickButtons();
-
-      initTimeout();
-    }, 2000);
-  }
-
-  /**
    * Triggers a click event on the given DOM element.
    * 
    * This function is based on an answer here:
@@ -59,6 +46,19 @@
       evObj.initEvent(etype, true, false);
       el.dispatchEvent(evObj);
     }
+  }
+
+  /**
+   * Starts the poll to see if any of the ad buttons are present in the page now.
+   * 
+   * The interval of 2 seconds is arbitrary. I guess it's a good compromise.
+   */
+  function initTimeout() {
+    setTimeout(function() {
+      checkAndClickButtons();
+
+      initTimeout();
+    }, 2000);
   }
 
   // Start polling:
