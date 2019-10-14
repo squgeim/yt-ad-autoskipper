@@ -5,6 +5,8 @@
     'ytp-ad-overlay-close-button', // Close overlay button
   ];
 
+  var timeoutId;
+
   /**
    * Loops over all the class names of buttons that we need to click to skip an
    * ad or overlay and returns an array of those elements.
@@ -49,18 +51,63 @@
   }
 
   /**
+   * Initializes an observer on the YouTube Video Player to get events when any
+   * element in there changes. We can check for the skip ad buttons then.
+   */
+  function initObserver() {
+    var ytdPlayer = (function(nodeList) {
+      return nodeList && nodeList[0];
+    })(document.getElementsByTagName('ytd-player'));
+
+    console.log(ytdPlayer);
+
+    if (!ytdPlayer) {
+      console.warn('Can not find the YouTube player to observer. Falling back to polling implementation.');
+
+      initTimeout();
+
+      return;
+    }
+
+    var observer = new MutationObserver(function() {
+      console.log('mutation!');
+      checkAndClickButtons();
+    });
+
+    observer.observe(ytdPlayer, { childList: true, subtree: true });
+  } 
+
+  /**
    * Starts the poll to see if any of the ad buttons are present in the page now.
    * 
    * The interval of 2 seconds is arbitrary. I guess it's a good compromise.
    */
   function initTimeout() {
-    setTimeout(function() {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(function() {
+      console.log('poll on!');
       checkAndClickButtons();
 
       initTimeout();
     }, 2000);
   }
 
-  // Start polling:
-  initTimeout();
+  /**
+   * We have two implementations to check for the skip ad buttons: one is based on
+   * MutationObserver that is only triggered when the video-player is updated in
+   * the page; second is a simple poll that constantly checks for the existence of
+   * the skip ad buttons.
+   * 
+   * We decide which implementation to start based on if the browser supports
+   * MutationObserver
+   */
+  if ('MutationObserver' in window) {
+    // Initializing the observer in the next cycle to make sure the YouTube player
+    // has been added to the page.
+    setTimeout(initObserver);
+  } else {
+    // Start polling:
+    initTimeout();
+  }
 })();
