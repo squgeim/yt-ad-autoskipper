@@ -14,16 +14,11 @@
   /**
    * This function checks if the current page has a skip ad button
    * available yet. If it has the button, a click event is fired on
-   * the button. If no such button is found, or if the current page
-   * is not a video page (/watch), then we do nothing.
+   * the button. If no such button is found, then we do nothing.
    * The interval period of 2 seconds is arbitary, but I guess 2sec
    * is a good choice.
    */
   var timeout = setInterval(function () {
-    if (window.location.pathname !== '/watch') {
-      return;
-    }
-
     // Trigger the `click` event on all the buttons in the list that are
     // present in the page.
     existingButtons(classList).forEach(button => {
