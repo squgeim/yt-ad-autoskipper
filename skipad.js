@@ -6,6 +6,8 @@
   ];
 
   var timeoutId;
+  var observedSkipBtn;
+  var skipBtnObserver;
 
   /**
    * Loops over all the class names of buttons that we need to click to skip an
@@ -21,11 +23,94 @@
   }
 
   /**
+   * We check if the button is visible by using the `offsetParent` attribute
+   * on an element. It is `null` if the element or its parent are set to have
+   * style `display:none`.
+   * 
+   * @param {Element} button - The button element
+   * @returns {boolean} - Whether the element is visible on the screen
+   */
+  function isBtnVisible(button) {
+    return button.offsetParent === null ? false : true;
+  }
+
+  /**
+   * Since we do not click the button as long as it is not visible, we can
+   * attach an observer to listen for the button's attribute changes to figure
+   * out when the element becomes visible.
+   * 
+   * @param {Element} button - The button element to click
+   */
+  function triggerClickWhenVisible(button) {
+    if (button === observedSkipBtn) {
+      // We are already observing this button.
+      return;
+    }
+
+    // Find the actual parent with the display style 'none' so that we can
+    // listen to that element's changes.
+    var parentWithDisplayStyle = (function() {
+      var currentParent = button;
+      while (currentParent !== null) {
+        if (currentParent.style.display === 'none') {
+          return currentParent;
+        }
+
+        currentParent = currentParent.parentElement;
+      }
+
+      return null;
+    })();
+
+    if (!parentWithDisplayStyle) {
+      // Give up.
+      return;
+    }
+
+    // If we had been observing another button, disconnect from that, if that
+    // element still exists in the DOM click that for good measure.
+    if (skipBtnObserver && observedSkipBtn) {
+      skipBtnObserver.disconnect();
+      triggerClick(observedSkipBtn);
+    }
+
+    // If this is the first skip button we have encountered, we will have to
+    // set up the observer first.
+    if (!skipBtnObserver) {
+      skipBtnObserver = new MutationObserver(function() {
+        if (!isBtnVisible(observedSkipBtn)) {
+          return;
+        }
+
+        triggerClick(observedSkipBtn);
+        observedSkipBtn = undefined;
+        skipBtnObserver.disconnect();
+      });
+    }
+
+    // We are now observing this button. Note that we actually are observing
+    // the button's parent that has the changing display attribute. But since we
+    // will actually be working on the button when the attribute changes we need
+    // to have this reference stored.
+    observedSkipBtn = button;
+    skipBtnObserver.observe(parentWithDisplayStyle, { attributes: true });
+  }
+
+  /**
    * Loops over all the buttons that need to be clicked and triggers the click
    * even on those buttons.
    */
   function checkAndClickButtons() {
     existingButtons(classList).forEach(button => {
+      // We want to make sure that we are only pressing the skip button when it
+      // is visible on the screen so that it is like an actual user is pressing
+      // it. This also gives a user time to not-skip the ad.
+      if (!isBtnVisible(button)) {
+        triggerClickWhenVisible(button);
+        
+        return;
+      } 
+
       triggerClick(button);
     })
   }
