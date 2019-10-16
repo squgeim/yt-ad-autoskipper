@@ -17,9 +17,13 @@
    * @returns {Array<Element>} - An arry of DOM elements
    */
   function existingButtons(classNames) {
-    return classNames.map(name => {
-      return document.getElementsByClassName(name)[0];
-    }).filter(v => v);
+    return classNames
+      .map(name => {
+        return Array.from(document.getElementsByClassName(name)) || [];
+      })
+      .reduce(function(acc, elems) {
+        return acc.concat(elems);
+      }, [])
   }
 
   /**
