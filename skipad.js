@@ -11,10 +11,10 @@
 
   /**
    * Loops over all the class names of buttons that we need to click to skip an
-   * ad or overlay and returns an array of those elements.
+   * ad or overlay, and returns an array of those elements.
    *
-   * @param {Array<String>} classNames - an array of class names of button that we need to click
-   * @returns {Array<Element>} - An arry of DOM elements
+   * @param {Array<String>} classNames - an array of class names of buttons that we need to click
+   * @returns {Array<Element>} - An array of DOM elements
    */
   function existingButtons(classNames) {
     return classNames
@@ -28,8 +28,8 @@
 
   /**
    * We check if the button is visible by using the `offsetParent` attribute
-   * on an element. It is `null` if the element or its parent are set to have
-   * style `display:none`.
+   * on an element. It is `null` if the element, or any of its parents, is set
+   * to have style `display:none`.
    * 
    * @param {Element} button - The button element
    * @returns {boolean} - Whether the element is visible on the screen
@@ -71,8 +71,8 @@
       return;
     }
 
-    // If we had been observing another button, disconnect from that, if that
-    // element still exists in the DOM click that for good measure.
+    // If we had been observing another button, disconnect from that. If that
+    // element still exists in the DOM, click on it for good measure.
     if (skipBtnObserver && observedSkipBtn) {
       skipBtnObserver.disconnect();
       triggerClick(observedSkipBtn);
@@ -92,11 +92,13 @@
       });
     }
 
-    // We are now observing this button. Note that we actually are observing
-    // the button's parent that has the changing display attribute. But since we
-    // will actually be working on the button when the attribute changes we need
-    // to have this reference stored.
+    // Since we will eventually be working on the button we need to have this
+    // reference stored.
     observedSkipBtn = button;
+    
+    // Note that we are actually observing the button's parent that has the
+    // display attribute, as the skip button's visibilty is controlled by its
+    // parent.
     skipBtnObserver.observe(parentWithDisplayStyle, { attributes: true });
   }
 
@@ -107,8 +109,8 @@
   function checkAndClickButtons() {
     existingButtons(classList).forEach(button => {
       // We want to make sure that we are only pressing the skip button when it
-      // is visible on the screen so that it is like an actual user is pressing
-      // it. This also gives a user time to not-skip the ad.
+      // is visible on the screen, so that it is like an actual user is pressing
+      // it. This also gives a user time to not-skip the ad in the future.
       if (!isBtnVisible(button)) {
         triggerClickWhenVisible(button);
         
@@ -141,7 +143,8 @@
 
   /**
    * Initializes an observer on the YouTube Video Player to get events when any
-   * element in there changes. We can check for the skip ad buttons then.
+   * of its child elements change. We can check for the existance of the skip ad
+   * buttons on those changes.
    *
    * @returns {Boolean} - true if observer could be set up, false otherwise
    */
@@ -171,13 +174,13 @@
 
   /**
    * We have two implementations to check for the skip ad buttons: one is based on
-   * MutationObserver that is only triggered when the video-player is updated in
+   * MutationObserver, that is only triggered when the video-player is updated in
    * the page; second is a simple poll that constantly checks for the existence of
    * the skip ad buttons.
    * 
-   * We first try to set up the mutation observer. It can sometimes fail even if the
-   * browser supports it if the video player has not yet been attached to the DOM.
-   * In that case, we continue the polling implementation until the observer can be
+   * We first try to set up the mutation observer. It can sometimes fail even when the
+   * browser supports it, if the video player has not yet been attached to the DOM.
+   * In such cases, we continue the polling implementation until the observer can be
    * set up.
    */
   function initTimeout() {
@@ -190,7 +193,7 @@
 
     /**
      * Starts the poll to see if any of the ad buttons are present in the page now.
-     * The interval of 2 seconds is arbitrary. I guess it's a good compromise.
+     * The interval of 2 seconds is arbitrary. I believe it is a good compromise.
      */
     timeoutId = setTimeout(function() {
       checkAndClickButtons();
@@ -208,14 +211,14 @@
     try {
       return window.self !== window.top;
     } catch (e) {
-      // The browser did not let us access the parent window. Still means we are
-      // in an iframe.
+      // The browser did not let us access the parent window. Which also means we
+      // are in an iframe.
       return true;
     }
   })();
 
   /**
-   * Only start the script if we are in the top level. YouTube has a few iframes
+   * Only start the script if we are at the top level. YouTube has a few iframes
    * in the page which would also be running this content script.
    */
   if (!inIframe) {
