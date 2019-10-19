@@ -8,6 +8,7 @@
   var timeoutId;
   var observedSkipBtn;
   var skipBtnObserver;
+  var noSkipBtn;
 
   /**
    * Loops over all the class names of buttons that we need to click to skip an
@@ -36,6 +37,66 @@
    */
   function isBtnVisible(button) {
     return button.offsetParent === null ? false : true;
+  }
+
+  /**
+   * Creates a don't-skip button. This button is always associated with a skip
+   * ad button on the screen. If that button is no longer present on the screen,
+   * the don't-skip button must not exist either. The siblingElement given here
+   * should be the parent element of the skip ad button that has the `display:none`
+   * property.
+   *
+   * @returns {Element} - The mounted button
+   */
+  function mountNoSkipBtn() {
+    if (!noSkipBtn) {
+      var NO_SKIP_BTN_ID = 'YTADSKIP_noSkipBtn';
+      noSkipBtn = document.createElement('button');
+      noSkipBtn.style = [
+        'position: absolute',
+        'background: rgba(50,50,0,0.75)',
+        'border: solid 1px yellow',
+        'right: -1px',
+        'bottom: 40%',
+        'width: 30%',
+        'text-align: center',
+        'font-size: large',
+        'color: white',
+        'padding: 2% 0',
+        'cursor: pointer',
+        'z-index: 1000'
+      ].join(';');
+      noSkipBtn.title = "yt-ad-autoskipper will skip this ad once the timer is up." +
+        "Click here if you want it to continue playing.";
+      noSkipBtn.textContent = 'DO NOT SKIP AD';
+      noSkipBtn.id = NO_SKIP_BTN_ID;
+
+      noSkipBtn.addEventListener('click', function(e) {
+        // This part is simple:
+        // 1) Stop the observer on the button
+        // 2) Remove this button.
+
+        console.log('NO SKIP clicked.')
+        console.log(observedSkipBtn);
+        console.log(skipBtnObserver);
+
+        observedSkipBtn = undefined;
+        skipBtnObserver.disconnect();
+        noSkipBtn.remove();
+      });
+    }
+
+    if (document.contains(noSkipBtn)) {
+      // We can't have two skip ad buttons on the screen; however this situation
+      // may have arisen.
+
+      noSkipBtn.remove();
+    }
+
+    var ytdPlayerContainer = document.querySelector('ytd-player div#container');
+    ytdPlayerContainer.appendChild(noSkipBtn);
+
+    return noSkipBtn;
   }
 
   /**
@@ -88,6 +149,7 @@
 
         triggerClick(observedSkipBtn);
         observedSkipBtn = undefined;
+        noSkipBtn && noSkipBtn.remove();
         skipBtnObserver.disconnect();
       });
     }
