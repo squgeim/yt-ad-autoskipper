@@ -16,4 +16,4 @@ This is useful when you are watching a YouTube video (or a playlist), and an ad 
 
 ---
 
-If you this this extension has made your YouTube experience better, care to buy me a coffee? [You can donate whatever you want.](https://paypal.me/squgeim)
+If you think this extension has made your YouTube experience better, would you care to buy me a cup of coffee? [You can donate whatever you want.](https://paypal.me/squgeim)
