@@ -14,6 +14,11 @@ This is useful when you are watching a YouTube video (or a playlist), and an ad 
 
 [Get it from Firefox Addon Marketplace](https://addons.mozilla.org/en-US/firefox/addon/youtube-ad-auto-skipper/)
 
+### Safari
+
+There is a port available:
+[ohanedan](https://github.com/ohanedan)/**[yt-ad-autoskipper-safari](https://github.com/ohanedan/yt-ad-autoskipper-safari)**
+
 ---
 
 If you think this extension has made your YouTube experience better, would you care to buy me a cup of coffee? [You can donate whatever you want.](https://paypal.me/squgeim)
