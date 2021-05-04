@@ -1,4 +1,9 @@
-# yt-ad-autoskipper
+# yt-ad-autoskipper-pro
+# new remarks from rauf-source
+this was already a repo made by shreya Dahal
+the new feature does not wait 5 seconds but instantly skips ads
+Do not use this repo as this is just for educational use only
+# the old readme bellow
 
 A browser extension that automates skipping ad on YouTube. This is not an ad blocker, it just automates the process of clicking on the "Skip Ad" button on YouTube.
 
