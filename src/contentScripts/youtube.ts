@@ -1,7 +1,7 @@
 const CLASS_LIST = [
-  'videoAdUiSkipButton', // Old close ad button
-  'ytp-ad-skip-button ytp-button', // New close ad button
-  'ytp-ad-overlay-close-button', // Close overlay button
+  "videoAdUiSkipButton", // Old close ad button
+  "ytp-ad-skip-button ytp-button", // New close ad button
+  "ytp-ad-overlay-close-button", // Close overlay button
 ];
 
 let timeoutId: number;
@@ -16,9 +16,9 @@ let skipBtnObserver: MutationObserver;
  */
 function existingButtons(classNames: string[]): HTMLElement[] {
   return classNames
-    .map(name => Array.from(document.getElementsByClassName(name)) || [])
+    .map((name) => Array.from(document.getElementsByClassName(name)) || [])
     .reduce((acc, elems) => acc.concat(elems), [])
-    .map(elem => elem as HTMLElement);
+    .map((elem) => elem as HTMLElement);
 }
 
 /**
@@ -51,7 +51,7 @@ function triggerClickWhenVisible(button: HTMLElement): void {
     let currentParent: HTMLElement | null = button;
 
     while (currentParent !== null) {
-      if (currentParent.style.display === 'none') {
+      if (currentParent.style.display === "none") {
         return currentParent;
       }
 
@@ -94,7 +94,7 @@ function triggerClickWhenVisible(button: HTMLElement): void {
   // Note that we are actually observing the button's parent that has the
   // display attribute, as the skip button's visibilty is controlled by its
   // parent.
-  skipBtnObserver.observe(parentWithDisplayStyle, {attributes: true});
+  skipBtnObserver.observe(parentWithDisplayStyle, { attributes: true });
 }
 
 /**
@@ -113,7 +113,7 @@ function checkAndClickButtons(): void {
     }
 
     triggerClick(button);
-  })
+  });
 }
 
 /**
@@ -125,8 +125,8 @@ function checkAndClickButtons(): void {
  * @param {Element} el - The element on which to trigger the event
  */
 function triggerClick(el: HTMLElement): void {
-  const evObj = document.createEvent('Events');
-  evObj.initEvent('click', true, false);
+  const evObj = document.createEvent("Events");
+  evObj.initEvent("click", true, false);
   el.dispatchEvent(evObj);
 }
 
@@ -138,13 +138,13 @@ function triggerClick(el: HTMLElement): void {
  * Returns true if observer could be set up, false otherwise.
  */
 function initObserver(): boolean {
-  if (!('MutationObserver' in window)) {
+  if (!("MutationObserver" in window)) {
     return false;
   }
 
   const ytdPlayer = ((nodeList) => {
     return nodeList && nodeList[0];
-  })(document.getElementsByTagName('ytd-player'));
+  })(document.getElementsByTagName("ytd-player"));
 
   if (!ytdPlayer) {
     return false;
@@ -154,7 +154,7 @@ function initObserver(): boolean {
     checkAndClickButtons();
   });
 
-  observer.observe(ytdPlayer, {childList: true, subtree: true});
+  observer.observe(ytdPlayer, { childList: true, subtree: true });
 
   clearTimeout(timeoutId); // Just for good measure
 
