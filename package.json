@@ -1,0 +1,26 @@
+{
+  "name": "yt-ad-autoskipper",
+  "version": "1.0.0",
+  "description": "An extension that auto skips ads after YouTube provides a skip ad button. It does not block an ad.",
+  "main": "index.js",
+  "scripts": {
+    "copy": "rm -rf build && cp -R src/dist build && cp LICENSE.md build",
+    "dev": "npm run copy && tsc --watch",
+    "package": "cd build && zip -r yt-ad-autoskipper.zip ./",
+    "build": "npm run copy && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/squgeim/yt-ad-autoskipper.git"
+  },
+  "author": "Shreya Dahal <shreyadahal@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/squgeim/yt-ad-autoskipper/issues"
+  },
+  "homepage": "https://github.com/squgeim/yt-ad-autoskipper#readme",
+  "devDependencies": {
+    "typescript": "^4.3.4"
+  }
+}
