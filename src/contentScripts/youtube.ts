@@ -22,11 +22,14 @@ function initSkipAdBtnObserver() {
     return;
   }
 
-  const ytdPlayer = ((nodeList) => {
-    return nodeList && nodeList[0];
-  })(document.getElementsByTagName("ytd-player"));
+  const ytdPlayer = document.querySelector("ytd-player");
 
   if (!ytdPlayer) {
+    // If we don't have the video player in the DOM yet, we just try again every
+    // 2 seconds until it does (ie, user starts playing a video).
+
+    setTimeout(() => initSkipAdBtnObserver(), 2000);
+
     return;
   }
 
@@ -53,14 +56,14 @@ type ProcessorTeardownCb = () => void;
 function processSkipAdButton(
   elem: HTMLElement
 ): ProcessorTeardownCb | undefined {
-  const channelUrl = document
-    .querySelector("ytd-channel-name")
-    ?.querySelectorAll("a")[0]?.href;
+  const channelUrl = document.querySelector<HTMLAnchorElement>(
+    "ytd-video-owner-renderer ytd-channel-name a"
+  )?.href;
 
   // If the Skip Ad button is visible, it means that the Ad has already played
   // for 5 seconds.
   const adPlaybackOffset = isElementVisible(elem) ? AD_PLAYBACK_OFFSET : 0;
-  const timeToSkipAdOffset = getTimeToSkipAdOffset(channelUrl ?? ""); // 0 for immediately
+  const timeToSkipAdOffset = getTimeToSkipAdOffset(channelUrl ?? "");
 
   if (timeToSkipAdOffset < 0) {
     // This means we are not skipping ads for this channel.
