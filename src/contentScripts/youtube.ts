@@ -5,15 +5,12 @@ import {
   isInIframe,
 } from "../utils/dom";
 import { addMilliseconds } from "../utils/datetime";
-
-const SKIP_AD_BTN_CLASSES = [
-  "videoAdUiSkipButton", // Old close ad button
-  "ytp-ad-skip-button ytp-button", // New close ad button
-];
-
-const BANNER_AD_BTN_CLASSES = [
-  "ytp-ad-overlay-close-button", // Close overlay button
-];
+import {
+  SKIP_AD_BTN_CLASSES,
+  BANNER_AD_BTN_CLASSES,
+  AD_PLAYBACK_OFFSET,
+} from "../constants/youtube";
+import { getTimeToSkipAdOffset } from "../utils/config";
 
 /**
  * Initializes an observer on the YouTube Video Player to get events when any
@@ -56,15 +53,22 @@ type ProcessorTeardownCb = () => void;
 function processSkipAdButton(
   elem: HTMLElement
 ): ProcessorTeardownCb | undefined {
-  /**
-   * If the Skip Ad button is visible, it means that the Ad has already played
-   * for 5 seconds.
-   */
-  const adPlaybackOffset = isElementVisible(elem) ? -5000 : 0;
-  const timeToSkipAdOffset = 5000; // 0 for immediately
+  const channelUrl = document
+    .querySelector("ytd-channel-name")
+    ?.querySelectorAll("a")[0]?.href;
+
+  // If the Skip Ad button is visible, it means that the Ad has already played
+  // for 5 seconds.
+  const adPlaybackOffset = isElementVisible(elem) ? AD_PLAYBACK_OFFSET : 0;
+  const timeToSkipAdOffset = getTimeToSkipAdOffset(channelUrl ?? ""); // 0 for immediately
+
+  if (timeToSkipAdOffset < 0) {
+    // This means we are not skipping ads for this channel.
+    return;
+  }
 
   const now = new Date();
-  const adPlaybackStart = addMilliseconds(now, adPlaybackOffset);
+  const adPlaybackStart = addMilliseconds(now, -adPlaybackOffset);
   const skipAdAt = addMilliseconds(adPlaybackStart, timeToSkipAdOffset);
 
   if (now >= skipAdAt) {
@@ -81,10 +85,8 @@ function processSkipAdButton(
 }
 
 function main() {
-  /**
-   * Only start the script if we are at the top level. YouTube has a few iframes
-   * in the page which would also be running this content script.
-   */
+  // Only start the script if we are at the top level. YouTube has a few iframes
+  // in the page which would also be running this content script.
   if (isInIframe()) {
     return;
   }
