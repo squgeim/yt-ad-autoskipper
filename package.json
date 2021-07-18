@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "copy": "rm -rf build && cp -R src/dist build && cp LICENSE.md build",
-    "dev": "npm run copy && tsc --watch",
+    "dev": "npm run copy && npm run esbuild:watch",
     "package": "cd build && zip -r yt-ad-autoskipper.zip ./",
-    "build": "npm run copy && tsc",
+    "build": "npm run copy && npm run esbuild",
+    "esbuild": "esbuild src/contentScripts/youtube.ts --outfile=build/youtube.js --bundle",
+    "esbuild:watch": "npm run esbuild -- --watch",
     "lint": "eslint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
+    "esbuild": "^0.12.15",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
