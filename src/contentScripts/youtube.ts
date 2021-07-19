@@ -1,16 +1,10 @@
-import {
-  clickElem,
-  getElementsByClassNames,
-  isElementVisible,
-  isInIframe,
-} from "../utils/dom";
-import { addMilliseconds } from "../utils/datetime";
+import { clickElem, getElementsByClassNames, isInIframe } from "../utils/dom";
 import {
   SKIP_AD_BTN_CLASSES,
   BANNER_AD_BTN_CLASSES,
-  AD_PLAYBACK_OFFSET,
 } from "../constants/youtube";
-import { getTimeToSkipAdOffset } from "../utils/config";
+import { VideoAdSkipper } from "../utils/videoAdSkipper";
+import { logger } from "../utils/logger";
 
 /**
  * Initializes an observer on the YouTube Video Player to get events when any
@@ -18,6 +12,8 @@ import { getTimeToSkipAdOffset } from "../utils/config";
  * buttons on those changes.
  */
 function initSkipAdBtnObserver() {
+  logger.debug("Setting up observer.");
+
   if (!("MutationObserver" in window)) {
     return;
   }
@@ -28,18 +24,35 @@ function initSkipAdBtnObserver() {
     // If we don't have the video player in the DOM yet, we just try again every
     // 2 seconds until it does (ie, user starts playing a video).
 
+    logger.debug("Failed to set up observer.");
+
     setTimeout(() => initSkipAdBtnObserver(), 2000);
 
     return;
   }
 
-  let teardownProcessor: ProcessorTeardownCb | undefined;
+  logger.debug("Observer set up complete.");
+
   const observer = new MutationObserver(() => {
+    logger.debug("Mutation.");
+
     const elems = getElementsByClassNames(SKIP_AD_BTN_CLASSES);
 
     if (elems.length) {
-      teardownProcessor?.();
-      teardownProcessor = processSkipAdButton(elems[0]);
+      logger.debug("Has ad button.");
+      const videoAdSkipper = VideoAdSkipper.getInstance(
+        document.location.href,
+        elems[0]
+      );
+
+      if (!videoAdSkipper.channelUrl) {
+        videoAdSkipper.channelUrl =
+          document.querySelector<HTMLAnchorElement>(
+            "ytd-video-owner-renderer ytd-channel-name a"
+          )?.href ?? "";
+      }
+
+      videoAdSkipper.skipAd();
     }
 
     // Banner ads are removed as soon as they appear.
@@ -49,42 +62,6 @@ function initSkipAdBtnObserver() {
   });
 
   observer.observe(ytdPlayer, { childList: true, subtree: true });
-}
-
-type ProcessorTeardownCb = () => void;
-
-function processSkipAdButton(
-  elem: HTMLElement
-): ProcessorTeardownCb | undefined {
-  const channelUrl = document.querySelector<HTMLAnchorElement>(
-    "ytd-video-owner-renderer ytd-channel-name a"
-  )?.href;
-
-  // If the Skip Ad button is visible, it means that the Ad has already played
-  // for 5 seconds.
-  const adPlaybackOffset = isElementVisible(elem) ? AD_PLAYBACK_OFFSET : 0;
-  const timeToSkipAdOffset = getTimeToSkipAdOffset(channelUrl ?? "");
-
-  if (timeToSkipAdOffset < 0) {
-    // This means we are not skipping ads for this channel.
-    return;
-  }
-
-  const now = new Date();
-  const adPlaybackStart = addMilliseconds(now, -adPlaybackOffset);
-  const skipAdAt = addMilliseconds(adPlaybackStart, timeToSkipAdOffset);
-
-  if (now >= skipAdAt) {
-    clickElem(elem);
-
-    return;
-  }
-
-  const timeoutId = setTimeout(() => {
-    clickElem(elem);
-  }, skipAdAt.getTime() - now.getTime());
-
-  return () => clearTimeout(timeoutId);
 }
 
 function main() {
