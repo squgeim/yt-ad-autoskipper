@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "copy": "rm -rf build && cp -R src/dist build && cp LICENSE.md build",
-    "dev": "npm run copy && npm run esbuild:watch",
+    "dev": "npm run copy && npm run rollup:watch",
     "package": "cd build && zip -r yt-ad-autoskipper.zip ./",
-    "build": "npm run copy && npm run esbuild",
-    "esbuild": "esbuild src/contentScripts/youtube.ts --outfile=build/youtube.js --bundle",
-    "esbuild:watch": "npm run esbuild -- --watch",
+    "build": "npm run copy && npm run rollup",
+    "rollup": "rollup --config rollup.config.js",
+    "rollup:watch": "npm run rollup -- --watch",
     "lint": "eslint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,13 +24,18 @@
   },
   "homepage": "https://github.com/squgeim/yt-ad-autoskipper#readme",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.2",
+    "@rollup/plugin-typescript": "^8.2.3",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
-    "esbuild": "^0.12.15",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.2",
+    "rollup": "^2.53.2",
     "typescript": "^4.3.4"
+  },
+  "dependencies": {
+    "lit": "*"
   }
 }

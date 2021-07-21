@@ -96,7 +96,7 @@ export class VideoAdSkipper {
 
     logger.debug("skipAdAt - now =", skipAdAt.getTime() - now.getTime());
 
-    this.#timeoutId = setTimeout(() => {
+    this.#timeoutId = window.setTimeout(() => {
       this.#clickButton();
     }, skipAdAt.getTime() - now.getTime());
   }
