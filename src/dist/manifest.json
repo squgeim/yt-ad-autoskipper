@@ -18,6 +18,9 @@
     "page": "pages/settings.html",
     "open_in_tab": true
   },
+  "permissions": [
+    "storage"
+  ],
   "icons": {
     "128": "logo.png"
   }

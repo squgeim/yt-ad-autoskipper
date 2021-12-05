@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+:root {
+  --bg-color: white;
+  --color: black;
+  --dialog-box-bg: ghostwhite;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: black;
+    --color: white;
+    --dialog-box-bg: #333;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--color);
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;;
+}
+
+input {
+  font-size: inherit;
+}
+
+.container {
+  margin: 2em auto;
+  max-width: 500px;
+}
+
+.container h1, .container h2 {
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.license {
+  padding: 2em 0;
+}
+
+h2.legend {
+  margin: 0;
+}
+
+fieldset {
+  border: 1px solid black;
+  margin-bottom: 1em;
+}
+
+.pref-box label {
+  display: block;
+  padding: 1em
+}
+
+.pref-box label:hover {
+  background: rgba(0,0,100,0.05);
+}
+
+.pref-box label input {
+  width: 50px;
+}
+
+.pref-box label span {
+  margin-left: 1em;
+}
+
+.channel-btns {
+  display: flex;
+  margin-top: 1em;
+}
+
+.channel-btns input {
+  flex: 1;
+  padding: 0.75em;
+}
+
+.channel-btns button {
+  padding: 0.75em;
+  font-size: 1em;
+}

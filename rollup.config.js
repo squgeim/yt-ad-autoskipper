@@ -1,3 +1,4 @@
+import copy from "rollup-plugin-copy";
 import typescript from "@rollup/plugin-typescript";
 import nodeResolve from "@rollup/plugin-node-resolve";
 
@@ -11,11 +12,21 @@ export default [
     plugins: [typescript()],
   },
   {
-    input: "src/settings/index.ts",
+    input: "src/settings/index.tsx",
     output: {
       file: "build/pages/settings.js",
       format: "esm",
     },
-    plugins: [typescript(), nodeResolve()],
+    plugins: [
+      typescript(),
+      nodeResolve(),
+      copy({
+        targets: [
+          { src: "src/dist/*", dest: "build" },
+          { src: "src/settings/*.(html|css)", dest: "build/pages" },
+        ],
+        verbose: true,
+      }),
+    ],
   },
 ];
