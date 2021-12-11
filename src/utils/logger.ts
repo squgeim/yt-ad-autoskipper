@@ -5,7 +5,11 @@ function debug(...args: unknown[]): void {
 }
 
 function error(...args: unknown[]): void {
-  return __DEBUG__ && console.error("[yt-ad-skipper:error]", ...args);
+  return console.error("[yt-ad-skipper:error]", ...args);
 }
 
-export const logger = { debug, error };
+function warn(...args: unknown[]): void {
+  return console.warn("[yt-ad-skipper:warn]", ...args);
+}
+
+export const logger = { debug, error, warn };

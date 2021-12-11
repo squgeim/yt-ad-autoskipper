@@ -1,3 +1,6 @@
+import merge from "deepmerge";
+import { logger } from "./logger";
+
 import { AD_PLAYBACK_OFFSET } from "../constants/youtube";
 
 type ChannelConfig = {
@@ -12,137 +15,82 @@ type ConfigObj = {
   channelConfigs: Record<string, ChannelConfig>;
 };
 
-class Config extends EventTarget {
-  #config = Config.DEFAULT_CONFIG;
+const DEFAULT_CONFIG: ConfigObj = Object.freeze({
+  email: "",
+  licenseKey: "",
+  globalConfig: {
+    timeToSkip: AD_PLAYBACK_OFFSET,
+    muteAd: false,
+  },
+  channelConfigs: {},
+});
 
-  static #singleton?: Config;
-  static DEFAULT_CONFIG: ConfigObj = {
-    email: "",
-    licenseKey: "",
-    globalConfig: {
-      timeToSkip: AD_PLAYBACK_OFFSET,
-      muteAd: false,
-    },
-    channelConfigs: {},
-  };
-
-  #isReady = false;
-
-  get isReady() {
-    return this.#isReady;
-  }
-
-  constructor() {
-    super();
-
-    this.#sync();
-    chrome.storage.onChanged.addListener((changed, area) => {
-      if (area !== "local" || !("config" in changed)) {
-        return;
+function getConfig(): Promise<ConfigObj> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(["config"], (result) => {
+      if (chrome.runtime.lastError) {
+        return reject(chrome.runtime.lastError);
       }
 
-      this.#sync();
+      if (!result.config) {
+        resolve(DEFAULT_CONFIG);
+      }
+
+      resolve(result.config);
     });
-  }
+  });
+}
 
-  static get instance() {
-    if (!this.#singleton) {
-      this.#singleton = new Config();
-    }
+function setConfig(config: ConfigObj): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ config }, () => {
+      if (chrome.runtime.lastError) {
+        return reject(chrome.runtime.lastError);
+      }
 
-    return this.#singleton;
-  }
-
-  get currentConfig() {
-    return this.#config;
-  }
-
-  #sync() {
-    this.#getConfig().then((c) => {
-      this.#config = c ?? this.#config;
-      this.#isReady = true;
-      this.dispatchEvent(new Event("update"));
-      console.log("HERE", this.#config);
+      resolve(undefined);
     });
+  });
+}
+
+export async function getTimeToSkipAdOffset(
+  channelUrl?: string
+): Promise<number> {
+  const config = await getConfig();
+
+  logger.debug("getTimeToSkipOffset: ", config);
+
+  if (channelUrl && channelUrl in config.channelConfigs) {
+    return config.channelConfigs[channelUrl].timeToSkip;
   }
 
-  #getConfig(): Promise<ConfigObj> {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.get(["config"], (result) => {
-        if (chrome.runtime.lastError) {
-          return reject(chrome.runtime.lastError);
-        }
+  return config.globalConfig.timeToSkip;
+}
 
-        resolve(result.config);
-      });
-    });
-  }
+export async function setTimeToSkipAdOffset(
+  scope: "global" | string,
+  value: number
+): Promise<number> {
+  const currentConfig = await getConfig();
+  let newConfig: ConfigObj;
 
-  #setConfig(config: ConfigObj): Promise<void> {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.set({ config }, () => {
-        if (chrome.runtime.lastError) {
-          return reject(chrome.runtime.lastError);
-        }
+  const configAddition = {
+    timeToSkip: value,
+  };
 
-        resolve();
-      });
-    });
-  }
-
-  async setConfigValue(
-    channelUrl: string,
-    value: Partial<ChannelConfig>
-  ): Promise<void>;
-  async setConfigValue(value: Partial<ChannelConfig>): Promise<void>;
-  async setConfigValue(
-    valueOrChannelUrl: string | Partial<ChannelConfig>,
-    value?: Partial<ChannelConfig>
-  ): Promise<void> {
-    if (isChannelConfig(valueOrChannelUrl)) {
-      this.#config.globalConfig = {
-        ...this.#config.globalConfig,
-        ...valueOrChannelUrl,
-      };
-
-      return;
-    }
-
-    const channelConfig = this.#config.channelConfigs[valueOrChannelUrl];
-
-    if (!channelConfig || !isChannelConfig(value)) {
-      return;
-    }
-
-    this.#config.channelConfigs[valueOrChannelUrl] = {
-      ...channelConfig,
-      ...value,
+  if (scope === "global") {
+    newConfig = {
+      ...currentConfig,
+      globalConfig: merge<ChannelConfig>(
+        currentConfig.globalConfig,
+        configAddition
+      ),
     };
 
-    return this.#setConfig(this.#config);
-  }
-}
-
-const config = Config.instance;
-
-function isChannelConfig(val: any): val is Partial<ChannelConfig> {
-  return val && ("timeToSkip" in val || "muteAd" in val);
-}
-
-/**
- * Returns the number of milliseconds that an ad should be played for given
- * channel.
- *
- * 0 for immediately, -1 for don't skip.
- */
-function getTimeToSkipAdOffset(channelUrl?: string): number {
-  if (channelUrl && channelUrl in config.currentConfig.channelConfigs) {
-    return config.currentConfig.channelConfigs[channelUrl].timeToSkip;
+    return setConfig(newConfig).then(() => getTimeToSkipAdOffset());
   }
 
-  console.log(config?.currentConfig);
+  logger.warn("Channel config has not been implemented yet.");
 
-  return config.currentConfig.globalConfig.timeToSkip;
+  return await getTimeToSkipAdOffset();
 }
-
-export { getTimeToSkipAdOffset, config };

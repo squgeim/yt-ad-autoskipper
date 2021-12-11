@@ -1,39 +1,29 @@
 import React, { useEffect, useState } from "preact/compat";
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
-import { getTimeToSkipAdOffset, config } from "../utils/config";
-import { logger } from "../utils/logger";
+import { getTimeToSkipAdOffset, setTimeToSkipAdOffset } from "../utils/config";
 
 export function ChannelPref(): Element {
   // const [isMute, setIsMute] = useState(false);
+  const [settingsReady, setSettingsReady] = useState(false);
   const [skipSecs, setSkipSecs] = useState(0);
 
-  const updateSkipSecs = (val: number) => {
-    if (!config?.isReady) return;
+  useEffect(() => {
+    Promise.all([getTimeToSkipAdOffset()]).then(([s]) => {
+      setSkipSecs(s);
+      setSettingsReady(true);
+    });
+  }, []);
 
-    const prevValue = skipSecs;
-    config
-      .setConfigValue({
-        timeToSkip: val,
-      })
-      .catch((err) => {
-        setSkipSecs(prevValue);
-        logger.error(err);
-      });
+  const updateSkipSecs = (val: number) => {
+    setTimeToSkipAdOffset("global", val)
+      .then((newVal) => setSkipSecs(newVal))
+      .catch(() => getTimeToSkipAdOffset().then((s) => setSkipSecs(s)));
   };
 
-  useEffect(() => {
-    const updateVal = () => {
-      logger.debug("updating value");
-      setSkipSecs(getTimeToSkipAdOffset());
-    };
-
-    config?.addEventListener("update", updateVal);
-
-    return () => {
-      config?.removeEventListener("update", updateVal);
-    };
-  });
+  if (!settingsReady) {
+    return <></>;
+  }
 
   return (
     <>

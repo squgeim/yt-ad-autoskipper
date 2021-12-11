@@ -60,7 +60,7 @@ export class VideoAdSkipper {
     return this.#channelUrl ?? "";
   }
 
-  skipAd(): void {
+  async skipAd(): Promise<void> {
     if (this.#timeoutId) {
       return;
     }
@@ -75,7 +75,8 @@ export class VideoAdSkipper {
 
     logger.debug("Ad playback offset", adPlaybackOffset);
 
-    const timeToSkipAdOffset = getTimeToSkipAdOffset(this.#channelUrl ?? "");
+    const timeToSkipAdOffset =
+      (await getTimeToSkipAdOffset(this.#channelUrl ?? "")) * 1000;
 
     logger.debug("Time to skip ad offset", timeToSkipAdOffset);
 

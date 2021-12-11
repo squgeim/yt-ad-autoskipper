@@ -7,5 +7,5 @@ export const BANNER_AD_BTN_CLASSES = [
   "ytp-ad-overlay-close-button", // Close overlay button
 ];
 
-// Milliseconds after with Skip Ad button is activated by default.
-export const AD_PLAYBACK_OFFSET = 5000;
+// Seconds after with Skip Ad button is activated by default.
+export const AD_PLAYBACK_OFFSET = 5;
