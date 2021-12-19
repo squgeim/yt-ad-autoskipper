@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "preact/compat";
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
-import { getTimeToSkipAdOffset, setTimeToSkipAdOffset } from "../utils/config";
+import {
+  getMuteAd,
+  getTimeToSkipAdOffset,
+  setMuteAd,
+  setTimeToSkipAdOffset,
+} from "../utils/config";
 
 export function ChannelPref(): Element {
-  // const [isMute, setIsMute] = useState(false);
+  const [isMute, setIsMute] = useState(false);
   const [settingsReady, setSettingsReady] = useState(false);
   const [skipSecs, setSkipSecs] = useState(0);
 
   useEffect(() => {
-    Promise.all([getTimeToSkipAdOffset()]).then(([s]) => {
+    Promise.all([getTimeToSkipAdOffset(), getMuteAd()]).then(([s, m]) => {
       setSkipSecs(s);
+      setIsMute(m);
       setSettingsReady(true);
     });
   }, []);
@@ -19,6 +25,12 @@ export function ChannelPref(): Element {
     setTimeToSkipAdOffset("global", val)
       .then((newVal) => setSkipSecs(newVal))
       .catch(() => getTimeToSkipAdOffset().then((s) => setSkipSecs(s)));
+  };
+
+  const updateIsMute = (val: boolean) => {
+    setMuteAd("global", val)
+      .then((newVal) => setIsMute(newVal))
+      .catch(() => getMuteAd().then((m) => setIsMute(m)));
   };
 
   if (!settingsReady) {
@@ -32,16 +44,16 @@ export function ChannelPref(): Element {
           <h2 class="legend">Default Preferences</h2>
         </legend>
 
-        {/*<label>*/}
-        {/*  <input*/}
-        {/*    type={"checkbox"}*/}
-        {/*    checked={isMute}*/}
-        {/*    onChange={() => {*/}
-        {/*      setIsMute((v) => !v);*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*  <span>Mute Ads.</span>*/}
-        {/*</label>*/}
+        <label>
+          <input
+            type={"checkbox"}
+            checked={isMute}
+            onChange={() => {
+              updateIsMute(!isMute);
+            }}
+          />
+          <span>Mute Ads.</span>
+        </label>
 
         <label>
           <input

@@ -15,6 +15,8 @@ type ConfigObj = {
   channelConfigs: Record<string, ChannelConfig>;
 };
 
+type Scope = "global" | string;
+
 const DEFAULT_CONFIG: ConfigObj = Object.freeze({
   email: "",
   licenseKey: "",
@@ -68,7 +70,7 @@ export async function getTimeToSkipAdOffset(
 }
 
 export async function setTimeToSkipAdOffset(
-  scope: "global" | string,
+  scope: Scope,
   value: number
 ): Promise<number> {
   const currentConfig = await getConfig();
@@ -87,10 +89,54 @@ export async function setTimeToSkipAdOffset(
       ),
     };
 
-    return setConfig(newConfig).then(() => getTimeToSkipAdOffset());
+    await setConfig(newConfig);
+
+    return getTimeToSkipAdOffset();
   }
 
   logger.warn("Channel config has not been implemented yet.");
 
   return await getTimeToSkipAdOffset();
+}
+
+export async function getMuteAd(channelUrl?: string): Promise<boolean> {
+  const config = await getConfig();
+
+  logger.debug("getIsMute: ", config);
+
+  if (channelUrl && channelUrl in config.channelConfigs) {
+    return config.channelConfigs[channelUrl].muteAd;
+  }
+
+  return config.globalConfig.muteAd;
+}
+
+export async function setMuteAd(
+  scope: Scope,
+  value: boolean
+): Promise<boolean> {
+  const currentConfig = await getConfig();
+  let newConfig: ConfigObj;
+
+  const configAddition = {
+    muteAd: value,
+  };
+
+  if (scope === "global") {
+    newConfig = {
+      ...currentConfig,
+      globalConfig: merge<ChannelConfig>(
+        currentConfig.globalConfig,
+        configAddition
+      ),
+    };
+
+    await setConfig(newConfig);
+
+    return getMuteAd();
+  }
+
+  logger.warn("Channel config has not been implemented yet.");
+
+  return await getMuteAd();
 }
