@@ -1,7 +1,8 @@
 import { logger } from "./logger";
 import { clickElem } from "./dom";
+import { getShouldMuteAd } from "./config";
 
-export function applyMuteAdConfig(): void {
+export async function applyMuteAdConfig(): Promise<void> {
   if (!isAdPlaying()) {
     resetSound();
 
@@ -14,8 +15,17 @@ export function applyMuteAdConfig(): void {
     return;
   }
 
-  logger.debug("video is NOT muted. Click button.");
-  clickMuteBtn();
+  const channelUrl =
+    document.querySelector<HTMLAnchorElement>(
+      "ytd-video-owner-renderer ytd-channel-name a"
+    )?.href ?? "";
+
+  if (await getShouldMuteAd(channelUrl)) {
+    logger.debug("video is NOT muted. Click button.");
+    clickMuteBtn();
+  } else {
+    logger.debug("Not muting ad for this channel: ", channelUrl);
+  }
 }
 
 function resetSound(): void {

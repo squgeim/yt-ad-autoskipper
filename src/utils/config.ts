@@ -99,7 +99,7 @@ export async function setTimeToSkipAdOffset(
   return await getTimeToSkipAdOffset();
 }
 
-export async function getMuteAd(channelUrl?: string): Promise<boolean> {
+export async function getShouldMuteAd(channelUrl?: string): Promise<boolean> {
   const config = await getConfig();
 
   logger.debug("getIsMute: ", config);
@@ -133,10 +133,10 @@ export async function setMuteAd(
 
     await setConfig(newConfig);
 
-    return getMuteAd();
+    return getShouldMuteAd();
   }
 
   logger.warn("Channel config has not been implemented yet.");
 
-  return await getMuteAd();
+  return await getShouldMuteAd();
 }

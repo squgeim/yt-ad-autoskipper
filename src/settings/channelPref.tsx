@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "preact/compat";
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
 import {
-  getMuteAd,
+  getShouldMuteAd,
   getTimeToSkipAdOffset,
   setMuteAd,
   setTimeToSkipAdOffset,
@@ -14,7 +14,7 @@ export function ChannelPref(): Element {
   const [skipSecs, setSkipSecs] = useState(0);
 
   useEffect(() => {
-    Promise.all([getTimeToSkipAdOffset(), getMuteAd()]).then(([s, m]) => {
+    Promise.all([getTimeToSkipAdOffset(), getShouldMuteAd()]).then(([s, m]) => {
       setSkipSecs(s);
       setIsMute(m);
       setSettingsReady(true);
@@ -30,7 +30,7 @@ export function ChannelPref(): Element {
   const updateIsMute = (val: boolean) => {
     setMuteAd("global", val)
       .then((newVal) => setIsMute(newVal))
-      .catch(() => getMuteAd().then((m) => setIsMute(m)));
+      .catch(() => getShouldMuteAd().then((m) => setIsMute(m)));
   };
 
   if (!settingsReady) {
