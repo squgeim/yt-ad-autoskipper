@@ -5,6 +5,39 @@ import {
 } from "../constants/youtube";
 import { VideoAdSkipper } from "../utils/videoAdSkipper";
 import { logger } from "../utils/logger";
+import { applyMuteAdConfig } from "../utils/adMuter";
+import { debounce } from "debounce";
+
+function handlePlayerMutation() {
+  logger.debug("Mutation.");
+
+  const elems = getElementsByClassNames(SKIP_AD_BTN_CLASSES);
+
+  if (elems.length) {
+    logger.debug("Has ad button.");
+    const videoAdSkipper = VideoAdSkipper.getInstance(
+      document.location.href,
+      elems[0]
+    );
+
+    if (!videoAdSkipper.channelUrl) {
+      videoAdSkipper.channelUrl =
+        document.querySelector<HTMLAnchorElement>(
+          "ytd-video-owner-renderer ytd-channel-name a"
+        )?.href ?? "";
+      logger.debug("channel url: ", videoAdSkipper.channelUrl);
+    }
+
+    videoAdSkipper.skipAd();
+  }
+
+  applyMuteAdConfig();
+
+  // Banner ads are removed as soon as they appear.
+  getElementsByClassNames(BANNER_AD_BTN_CLASSES).forEach((elem) =>
+    clickElem(elem)
+  );
+}
 
 /**
  * Initializes an observer on the YouTube Video Player to get events when any
@@ -18,7 +51,7 @@ function initSkipAdBtnObserver() {
     return;
   }
 
-  const ytdPlayer = document.querySelector("ytd-player");
+  const ytdPlayer = document.querySelector<HTMLElement>("ytd-player");
 
   if (!ytdPlayer) {
     // If we don't have the video player in the DOM yet, we just try again every
@@ -33,33 +66,7 @@ function initSkipAdBtnObserver() {
 
   logger.debug("Observer set up complete.");
 
-  const observer = new MutationObserver(() => {
-    logger.debug("Mutation.");
-
-    const elems = getElementsByClassNames(SKIP_AD_BTN_CLASSES);
-
-    if (elems.length) {
-      logger.debug("Has ad button.");
-      const videoAdSkipper = VideoAdSkipper.getInstance(
-        document.location.href,
-        elems[0]
-      );
-
-      if (!videoAdSkipper.channelUrl) {
-        videoAdSkipper.channelUrl =
-          document.querySelector<HTMLAnchorElement>(
-            "ytd-video-owner-renderer ytd-channel-name a"
-          )?.href ?? "";
-      }
-
-      videoAdSkipper.skipAd();
-    }
-
-    // Banner ads are removed as soon as they appear.
-    getElementsByClassNames(BANNER_AD_BTN_CLASSES).forEach((elem) =>
-      clickElem(elem)
-    );
-  });
+  const observer = new MutationObserver(debounce(handlePlayerMutation, 100));
 
   observer.observe(ytdPlayer, { childList: true, subtree: true });
 }
