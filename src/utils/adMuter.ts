@@ -22,7 +22,7 @@ export async function applyMuteAdConfig(): Promise<void> {
       "ytd-video-owner-renderer ytd-channel-name a"
     )?.href ?? "";
 
-  if (await getShouldMuteAd(channelUrl)) {
+  if (!isAdMuted && (await getShouldMuteAd(channelUrl))) {
     logger.debug("video is NOT muted. Click button.");
     isAdMuted = true;
     clickMuteBtn();
