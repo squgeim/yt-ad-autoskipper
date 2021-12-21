@@ -5,7 +5,7 @@ import {
 } from "../constants/youtube";
 import { VideoAdSkipper } from "../utils/videoAdSkipper";
 import { logger } from "../utils/logger";
-import { applyMuteAdConfig } from "../utils/adMuter";
+import { applyMuteAdConfig, isAdPlaying } from "../utils/adMuter";
 import { debounce } from "debounce";
 
 function handlePlayerMutation() {
@@ -13,7 +13,7 @@ function handlePlayerMutation() {
 
   const elems = getElementsByClassNames(SKIP_AD_BTN_CLASSES);
 
-  if (elems.length) {
+  if (elems.length && isAdPlaying()) {
     logger.debug("Has ad button.");
     const videoAdSkipper = VideoAdSkipper.getInstance(
       document.location.href,

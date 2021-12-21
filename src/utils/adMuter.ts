@@ -2,6 +2,8 @@ import { logger } from "./logger";
 import { clickElem } from "./dom";
 import { getShouldMuteAd } from "./config";
 
+let isAdMuted = false;
+
 export async function applyMuteAdConfig(): Promise<void> {
   if (!isAdPlaying()) {
     resetSound();
@@ -22,6 +24,7 @@ export async function applyMuteAdConfig(): Promise<void> {
 
   if (await getShouldMuteAd(channelUrl)) {
     logger.debug("video is NOT muted. Click button.");
+    isAdMuted = true;
     clickMuteBtn();
   } else {
     logger.debug("Not muting ad for this channel: ", channelUrl);
@@ -29,8 +32,9 @@ export async function applyMuteAdConfig(): Promise<void> {
 }
 
 function resetSound(): void {
-  if (isMuted()) {
+  if (isMuted() && isAdMuted) {
     logger.debug("resetting audio.");
+    isAdMuted = false;
     clickMuteBtn();
   }
 }
@@ -48,6 +52,6 @@ function clickMuteBtn() {
   muteBtn && clickElem(muteBtn);
 }
 
-function isAdPlaying() {
-  return !!document.querySelector(".ytp-ad-module")?.childElementCount;
+export function isAdPlaying(): boolean {
+  return !!document.querySelector(".html5-video-player.ad-showing");
 }
