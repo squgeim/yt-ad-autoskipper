@@ -2,11 +2,20 @@ import { logger } from "./logger";
 import { clickElem } from "./dom";
 import { getShouldMuteAd } from "./config";
 
-let isAdMuted = false;
+let currentState: "ad" | "video";
 
 export async function applyMuteAdConfig(): Promise<void> {
-  if (!isAdPlaying()) {
-    resetSound();
+  const nextState = getCurrentState();
+  const stateChanged = nextState !== currentState;
+  currentState = nextState;
+
+  logger.debug("current state: ", nextState);
+
+  if (currentState === "video") {
+    if (stateChanged) {
+      logger.debug("state changed");
+      resetSound();
+    }
 
     return;
   }
@@ -22,9 +31,8 @@ export async function applyMuteAdConfig(): Promise<void> {
       "ytd-video-owner-renderer ytd-channel-name a"
     )?.href ?? "";
 
-  if (!isAdMuted && (await getShouldMuteAd(channelUrl))) {
+  if (await getShouldMuteAd(channelUrl)) {
     logger.debug("video is NOT muted. Click button.");
-    isAdMuted = true;
     clickMuteBtn();
   } else {
     logger.debug("Not muting ad for this channel: ", channelUrl);
@@ -32,9 +40,8 @@ export async function applyMuteAdConfig(): Promise<void> {
 }
 
 function resetSound(): void {
-  if (isMuted() && isAdMuted) {
+  if (isMuted()) {
     logger.debug("resetting audio.");
-    isAdMuted = false;
     clickMuteBtn();
   }
 }
@@ -48,8 +55,13 @@ function isMuted() {
 }
 
 function clickMuteBtn() {
+  logger.debug("click mute button.");
   const muteBtn = document.querySelector<HTMLElement>(".ytp-mute-button");
   muteBtn && clickElem(muteBtn);
+}
+
+function getCurrentState() {
+  return isAdPlaying() ? "ad" : "video";
 }
 
 export function isAdPlaying(): boolean {
