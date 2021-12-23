@@ -20,8 +20,8 @@ export async function applyMuteAdConfig(): Promise<void> {
     return;
   }
 
-  if (isMuted()) {
-    logger.debug("video is muted. Doing nothing.");
+  if (isMuted() || !stateChanged) {
+    logger.debug("video is muted or state did not change. Doing nothing.");
 
     return;
   }
