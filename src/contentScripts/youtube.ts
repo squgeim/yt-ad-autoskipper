@@ -6,7 +6,6 @@ import {
 import { VideoAdSkipper } from "../utils/videoAdSkipper";
 import { logger } from "../utils/logger";
 import { applyMuteAdConfig, isAdPlaying } from "../utils/adMuter";
-import { debounce } from "debounce";
 
 function handlePlayerMutation() {
   logger.debug("Mutation.");
@@ -66,7 +65,7 @@ function initSkipAdBtnObserver() {
 
   logger.debug("Observer set up complete.");
 
-  const observer = new MutationObserver(debounce(handlePlayerMutation, 100));
+  const observer = new MutationObserver(handlePlayerMutation);
 
   observer.observe(ytdPlayer, { childList: true, subtree: true });
 }
