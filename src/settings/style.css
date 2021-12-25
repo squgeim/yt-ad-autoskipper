@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 :root {
-  --bg-color: white;
+  --bg-color: #F3F2F7;
   --color: black;
-  --dialog-box-bg: ghostwhite;
+  --pref-box-bg: white;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-color: black;
+    --bg-color: rgb(28, 28, 30);
     --color: white;
-    --dialog-box-bg: #333;
+    --pref-box-bg: rgb(44, 44, 46);
   }
 }
 
@@ -41,16 +41,32 @@ input {
 
 h2.legend {
   margin: 0;
+  font-size: 1em;
 }
 
 fieldset {
-  border: 1px solid black;
   margin-bottom: 1em;
+  border-radius: 1em;
+  background-color: var(--pref-box-bg);
+  border: none;
+  position: relative;
+  margin-top: 3em;
+}
+
+fieldset legend {
+  position: absolute;
+  top: -1.5em;
+
 }
 
 .pref-box label {
   display: block;
-  padding: 1em
+  padding: 1em;
+  border-bottom: 1px solid var(--bg-color);
+}
+
+.pref-box label:last-child {
+  border-bottom: none;
 }
 
 .pref-box label:hover {

@@ -76,22 +76,22 @@ export function ChannelPref(): Element {
           <span>Skips ads after it has played for seconds.</span>
         </label>
       </fieldset>
-      {/*<fieldset>*/}
-      {/*  <legend>*/}
-      {/*    <h2 class="legend">Channel Preferences</h2>*/}
-      {/*  </legend>*/}
+      <fieldset>
+        <legend>
+          <h2 class="legend">Channel Preferences</h2>
+        </legend>
 
-      {/*  <p>You can customize the extension for your favorite Youtubers.</p>*/}
+        <p>You can customize the extension for your favorite Youtubers.</p>
 
-      {/*  <input*/}
-      {/*    type="text"*/}
-      {/*    title="Filter Channels"*/}
-      {/*    placeholder="Filter Channels"*/}
-      {/*  />*/}
-      {/*  <div class="channel-btns">*/}
-      {/*    <button>+</button>*/}
-      {/*  </div>*/}
-      {/*</fieldset>*/}
+        <input
+          type="text"
+          title="Filter Channels"
+          placeholder="Filter Channels"
+        />
+        <div class="channel-btns">
+          <button>+</button>
+        </div>
+      </fieldset>
     </>
   );
 }
