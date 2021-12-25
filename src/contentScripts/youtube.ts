@@ -5,7 +5,9 @@ import {
 } from "../constants/youtube";
 import { VideoAdSkipper } from "../utils/videoAdSkipper";
 import { logger } from "../utils/logger";
-import { applyMuteAdConfig, isAdPlaying } from "../utils/adMuter";
+import { applyMuteAdConfig } from "../utils/adMuter";
+import { injectConfigureBtn } from "../utils/configureBtn";
+import { getChannelId, isAdPlaying } from "../utils/youtube";
 
 function handlePlayerMutation() {
   logger.debug("Mutation.");
@@ -20,10 +22,7 @@ function handlePlayerMutation() {
     );
 
     if (!videoAdSkipper.channelUrl) {
-      videoAdSkipper.channelUrl =
-        document.querySelector<HTMLAnchorElement>(
-          "ytd-video-owner-renderer ytd-channel-name a"
-        )?.href ?? "";
+      videoAdSkipper.channelUrl = getChannelId();
       logger.debug("channel url: ", videoAdSkipper.channelUrl);
     }
 

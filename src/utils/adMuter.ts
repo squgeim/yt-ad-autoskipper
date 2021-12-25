@@ -1,11 +1,11 @@
 import { logger } from "./logger";
-import { clickElem } from "./dom";
 import { getShouldMuteAd } from "./config";
+import { clickMuteBtn, isAdPlaying, isVideoMuted } from "./youtube";
 
 let currentState: "ad" | "video";
 
 export async function applyMuteAdConfig(): Promise<void> {
-  const nextState = getCurrentState();
+  const nextState = getCurrentVideoState();
   const stateChanged = nextState !== currentState;
   currentState = nextState;
 
@@ -20,7 +20,7 @@ export async function applyMuteAdConfig(): Promise<void> {
     return;
   }
 
-  if (isMuted() || !stateChanged) {
+  if (isVideoMuted() || !stateChanged) {
     logger.debug("video is muted or state did not change. Doing nothing.");
 
     return;
@@ -40,30 +40,12 @@ export async function applyMuteAdConfig(): Promise<void> {
 }
 
 function resetSound(): void {
-  if (isMuted()) {
+  if (isVideoMuted()) {
     logger.debug("resetting audio.");
     clickMuteBtn();
   }
 }
 
-function isMuted() {
-  const volumeSlider = document.querySelector<HTMLElement>(
-    ".ytp-volume-slider-handle"
-  );
-
-  return parseInt(volumeSlider?.style.left || "0") === 0;
-}
-
-function clickMuteBtn() {
-  logger.debug("click mute button.");
-  const muteBtn = document.querySelector<HTMLElement>(".ytp-mute-button");
-  muteBtn && clickElem(muteBtn);
-}
-
-function getCurrentState() {
+function getCurrentVideoState() {
   return isAdPlaying() ? "ad" : "video";
-}
-
-export function isAdPlaying(): boolean {
-  return !!document.querySelector(".html5-video-player.ad-showing");
 }
