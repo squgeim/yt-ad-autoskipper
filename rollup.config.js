@@ -13,6 +13,14 @@ export default [
     plugins: [nodeResolve(), commonjs(), typescript()],
   },
   {
+    input: "src/backgroundScripts/index.ts",
+    output: {
+      file: "build/background.js",
+      format: "cjs",
+    },
+    plugins: [nodeResolve(), commonjs(), typescript()],
+  },
+  {
     input: "src/settings/index.tsx",
     output: {
       file: "build/pages/settings.js",

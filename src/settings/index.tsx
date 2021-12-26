@@ -1,11 +1,42 @@
-import React, { useState } from "preact/compat";
+import React, { useEffect, useState } from "preact/compat";
 import { render } from "preact";
 
 import { License } from "./license";
+import { GlobalPref } from "./globalPref";
 import { ChannelPref } from "./channelPref";
 
+function useRoute() {
+  const [page, setPage] = useState("pref");
+  const [pageProps, setPageProps] = useState<Record<string, unknown>>({});
+
+  useEffect(() => {
+    (async () => {
+      const { page, pageProps } = await chrome.storage.local.get([
+        "page",
+        "pageProps",
+      ]);
+
+      if (!page) {
+        return;
+      }
+
+      await chrome.storage.local.remove(["page", "pageProps"]);
+
+      setPage(page);
+      setPageProps(pageProps);
+    })();
+  }, []);
+
+  const changePage = (page: string, props?: Record<string, unknown>) => {
+    setPage(page);
+    setPageProps(props || {});
+  };
+
+  return { page, pageProps, changePage };
+}
+
 function Settings() {
-  const [page, setPage] = useState<"pref" | "configure-channel">("pref");
+  const { page, pageProps, changePage } = useRoute();
 
   return (
     <div class="container">
@@ -14,8 +45,15 @@ function Settings() {
       {page === "pref" && (
         <>
           <License />
-          <ChannelPref />
+          <GlobalPref />
         </>
+      )}
+
+      {page === "channel" && (
+        <ChannelPref
+          goHome={() => changePage("pref")}
+          channelId={pageProps.channelId as string}
+        />
       )}
     </div>
   );

@@ -14,9 +14,11 @@
       "all_frames": true
     }
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
-    "default_title": "Configure Ad Auto Skipper",
-    "default_popup": "pages/settings.html"
+    "default_title": "Configure Ad Auto Skipper"
   },
   "options_page": "pages/settings.html",
   "permissions": [

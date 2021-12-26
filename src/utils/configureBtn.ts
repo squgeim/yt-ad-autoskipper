@@ -1,10 +1,9 @@
 import { addLocationChangeEventHandler } from "./dom";
 import { getChannelId, isVideoPage } from "./youtube";
 import { logger } from "./logger";
+import { CONFIGURE_CHANNEL } from "../constants/actions";
 
 export function injectConfigureBtn(): void {
-  const currentChannelId = getChannelId();
-
   function createButton() {
     const hasButton = document.querySelector("#yas_config_channel_btn");
 
@@ -23,9 +22,15 @@ export function injectConfigureBtn(): void {
     btn.style.marginBottom = "6px";
     btn.style.cursor = "pointer";
 
-    btn.addEventListener("Click", () => {
-      logger.debug("configure channel: ", currentChannelId);
-    });
+    btn.onclick = () => {
+      const channelId = getChannelId();
+      logger.debug("configure channel: ", channelId);
+
+      chrome.runtime.sendMessage({
+        type: CONFIGURE_CHANNEL,
+        channelId,
+      });
+    };
 
     const subscribeBtn = document.querySelector(
       "ytd-video-secondary-info-renderer #subscribe-button"
