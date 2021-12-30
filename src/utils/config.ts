@@ -3,10 +3,15 @@ import { logger } from "./logger";
 
 import { AD_PLAYBACK_OFFSET } from "../constants/youtube";
 
-type BaseConfig = {
+type TimeToSkipConfig = {
   timeToSkip: number;
+};
+
+type MuteAdConfig = {
   muteAd: boolean;
 };
+
+type BaseConfig = TimeToSkipConfig & MuteAdConfig;
 
 type ChannelConfig = {
   channelName: string;
@@ -23,7 +28,7 @@ type ConfigObj = {
 
 type Scope = "global" | string;
 
-const DEFAULT_CONFIG: ConfigObj = Object.freeze({
+export const DEFAULT_CONFIG: ConfigObj = Object.freeze({
   email: "",
   licenseKey: "",
   globalConfig: {
@@ -61,6 +66,42 @@ function setConfig(config: ConfigObj): Promise<void> {
   });
 }
 
+async function mergeChannelConfig(
+  scope: Scope,
+  addition: TimeToSkipConfig | MuteAdConfig
+) {
+  const currentConfig = await getConfig();
+
+  if (scope === "global") {
+    const newConfig: ConfigObj = {
+      ...currentConfig,
+      globalConfig: merge<ChannelConfig>(currentConfig.globalConfig, addition),
+    };
+
+    await setConfig(newConfig);
+
+    return;
+  }
+
+  if (!(scope in currentConfig.channelConfigs)) {
+    logger.warn("Channel has not been created yet. This should not happen.");
+
+    return;
+  }
+
+  const newConfig: ConfigObj = {
+    ...currentConfig,
+    channelConfigs: {
+      [scope]: merge<ChannelConfig>(
+        currentConfig.channelConfigs[scope],
+        addition
+      ),
+    },
+  };
+
+  await setConfig(newConfig);
+}
+
 export async function getTimeToSkipAdOffset(
   channelUrl?: string
 ): Promise<number> {
@@ -79,28 +120,11 @@ export async function setTimeToSkipAdOffset(
   scope: Scope,
   value: number
 ): Promise<number> {
-  const currentConfig = await getConfig();
-  let newConfig: ConfigObj;
-
   const configAddition = {
     timeToSkip: value,
   };
 
-  if (scope === "global") {
-    newConfig = {
-      ...currentConfig,
-      globalConfig: merge<ChannelConfig>(
-        currentConfig.globalConfig,
-        configAddition
-      ),
-    };
-
-    await setConfig(newConfig);
-
-    return getTimeToSkipAdOffset();
-  }
-
-  logger.warn("Channel config has not been implemented yet.");
+  await mergeChannelConfig(scope, configAddition);
 
   return await getTimeToSkipAdOffset();
 }
@@ -121,28 +145,45 @@ export async function setMuteAd(
   scope: Scope,
   value: boolean
 ): Promise<boolean> {
-  const currentConfig = await getConfig();
-  let newConfig: ConfigObj;
-
   const configAddition = {
     muteAd: value,
   };
 
-  if (scope === "global") {
-    newConfig = {
-      ...currentConfig,
-      globalConfig: merge<ChannelConfig>(
-        currentConfig.globalConfig,
-        configAddition
-      ),
-    };
+  await mergeChannelConfig(scope, configAddition);
 
-    await setConfig(newConfig);
+  return getShouldMuteAd();
+}
 
-    return getShouldMuteAd();
-  }
+export async function getChannelConfig(
+  channelId: string
+): Promise<ChannelConfig | undefined> {
+  const currentConfig = await getConfig();
 
-  logger.warn("Channel config has not been implemented yet.");
+  return currentConfig.channelConfigs[channelId];
+}
 
-  return await getShouldMuteAd();
+export async function createChannel(
+  channelId: string,
+  channelName: string,
+  imageUrl: string
+): Promise<ConfigObj> {
+  const currentConfig = await getConfig();
+
+  const newConfig: ConfigObj = {
+    ...currentConfig,
+    channelConfigs: {
+      ...currentConfig.channelConfigs,
+      [channelId]: {
+        channelId,
+        channelName,
+        imageUrl,
+        timeToSkip: DEFAULT_CONFIG.globalConfig.timeToSkip,
+        muteAd: DEFAULT_CONFIG.globalConfig.muteAd,
+      },
+    },
+  };
+
+  await setConfig(newConfig);
+
+  return newConfig;
 }
