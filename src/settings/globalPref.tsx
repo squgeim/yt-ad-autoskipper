@@ -7,6 +7,7 @@ import {
   setMuteAd,
   setTimeToSkipAdOffset,
 } from "../utils/config";
+import { ChannelPrefForm } from "./channelPrefForm";
 
 export function GlobalPref(): Element {
   const [isMute, setIsMute] = useState(false);
@@ -39,43 +40,7 @@ export function GlobalPref(): Element {
 
   return (
     <>
-      <fieldset class="pref-box">
-        <legend>
-          <h2 class="legend">Default Preferences</h2>
-        </legend>
-
-        <label>
-          <input
-            type={"checkbox"}
-            checked={isMute}
-            onChange={() => {
-              updateIsMute(!isMute);
-            }}
-          />
-          <span>Mute Ads.</span>
-        </label>
-
-        <label>
-          <input
-            type={"number"}
-            value={skipSecs}
-            onChange={(e) => {
-              const input = e.target as HTMLInputElement;
-              const val = +input.value;
-
-              if (isNaN(val)) {
-                input.value = "" + skipSecs;
-
-                return;
-              }
-
-              input.value = "" + val;
-              updateSkipSecs(val);
-            }}
-          />
-          <span>Skips ads after it has played for seconds.</span>
-        </label>
-      </fieldset>
+      <ChannelPrefForm />
       <fieldset>
         <legend>
           <h2 class="legend">Channel Preferences</h2>
