@@ -42,35 +42,24 @@ input {
 h2.legend {
   margin: 0;
   font-size: 1em;
+  flex: 1;
 }
 
-fieldset {
+fieldset.pref-box {
   margin-bottom: 1em;
   border-radius: 1em;
   background-color: var(--pref-box-bg);
   border: none;
-  position: relative;
-  margin-top: 3em;
-}
-
-fieldset legend {
-  position: absolute;
-  top: -1.5em;
-
 }
 
 .pref-box label {
-  display: block;
   padding: 1em;
   border-bottom: 1px solid var(--bg-color);
+  display: flex;
 }
 
 .pref-box label:last-child {
   border-bottom: none;
-}
-
-.pref-box label:hover {
-  background: rgba(0,0,100,0.05);
 }
 
 .pref-box label input {
@@ -78,7 +67,8 @@ fieldset legend {
 }
 
 .pref-box label span {
-  margin-left: 1em;
+  margin-right: 1em;
+  flex: 1;
 }
 
 .channel-btns {
@@ -94,4 +84,30 @@ fieldset legend {
 .channel-btns button {
   padding: 0.75em;
   font-size: 1em;
+}
+
+.channel-pref-header {
+  margin-bottom: 1em;
+  border-radius: 1em;
+  background-color: var(--pref-box-bg);
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.channel-logo {
+  width: 48px;
+  border-radius: 1em;
+}
+
+.back-btn {
+  border: none;
+  color: inherit;
+  border-radius: 50%;
+  background: rgba(255,255,255, 0.1);
+  width: 3em;
+  aspect-ratio: 1;
+  font-family: monospace;
+  cursor: pointer;
 }

@@ -5,8 +5,10 @@ import { License } from "./license";
 import { GlobalPref } from "./globalPref";
 import { ChannelPref } from "./channelPref";
 
+type PAGE = "pref" | "channel";
+
 function useRoute() {
-  const [page, setPage] = useState("pref");
+  const [page, setPage] = useState<PAGE>("pref");
   const [pageProps, setPageProps] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
@@ -20,14 +22,14 @@ function useRoute() {
         return;
       }
 
-      await chrome.storage.local.remove(["page", "pageProps"]);
+      // await chrome.storage.local.remove(["page", "pageProps"]);
 
       setPage(page);
       setPageProps(pageProps);
     })();
   }, []);
 
-  const changePage = (page: string, props?: Record<string, unknown>) => {
+  const changePage = (page: PAGE, props?: Record<string, unknown>) => {
     setPage(page);
     setPageProps(props || {});
   };
@@ -53,6 +55,8 @@ function Settings() {
         <ChannelPref
           goHome={() => changePage("pref")}
           channelId={pageProps.channelId as string}
+          channelName={pageProps.channelName as string}
+          imageUrl={pageProps.imageUrl as string}
         />
       )}
     </div>

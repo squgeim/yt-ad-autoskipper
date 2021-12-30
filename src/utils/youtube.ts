@@ -19,16 +19,34 @@ export function clickMuteBtn(): void {
   muteBtn && clickElem(muteBtn);
 }
 
-export function getChannelId(): string {
-  const channelUrl = document.querySelector<HTMLAnchorElement>(
+export function getChannelInfo(): {
+  channelId: string;
+  channelName: string;
+  imageUrl: string;
+} {
+  const channelA = document.querySelector<HTMLAnchorElement>(
     "ytd-video-owner-renderer ytd-channel-name a"
-  )?.href;
+  );
 
-  if (!channelUrl) {
-    return "";
+  if (!channelA) {
+    return {
+      channelId: "",
+      channelName: "",
+      imageUrl: "",
+    };
   }
 
-  return channelUrl.split("/").pop() || "";
+  const channelName = channelA.innerText;
+  const channelId = channelA.href.split("/").pop() || "";
+  const imageUrl =
+    document.querySelector<HTMLImageElement>("ytd-video-owner-renderer img")
+      ?.src || "";
+
+  return {
+    imageUrl,
+    channelId,
+    channelName,
+  };
 }
 
 export function isVideoPage(): boolean {

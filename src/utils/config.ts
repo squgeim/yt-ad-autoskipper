@@ -3,15 +3,21 @@ import { logger } from "./logger";
 
 import { AD_PLAYBACK_OFFSET } from "../constants/youtube";
 
-type ChannelConfig = {
+type BaseConfig = {
   timeToSkip: number;
   muteAd: boolean;
 };
 
+type ChannelConfig = {
+  channelName: string;
+  channelId: string;
+  imageUrl: string;
+} & BaseConfig;
+
 type ConfigObj = {
   email: string;
   licenseKey: string;
-  globalConfig: ChannelConfig;
+  globalConfig: BaseConfig;
   channelConfigs: Record<string, ChannelConfig>;
 };
 

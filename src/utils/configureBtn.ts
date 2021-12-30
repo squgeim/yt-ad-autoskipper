@@ -1,5 +1,5 @@
 import { addLocationChangeEventHandler } from "./dom";
-import { getChannelId, isVideoPage } from "./youtube";
+import { getChannelInfo, isVideoPage } from "./youtube";
 import { logger } from "./logger";
 import { CONFIGURE_CHANNEL } from "../constants/actions";
 
@@ -23,12 +23,16 @@ export function injectConfigureBtn(): void {
     btn.style.cursor = "pointer";
 
     btn.onclick = () => {
-      const channelId = getChannelId();
+      const { channelId, channelName, imageUrl } = getChannelInfo();
       logger.debug("configure channel: ", channelId);
 
       chrome.runtime.sendMessage({
         type: CONFIGURE_CHANNEL,
-        channelId,
+        channel: {
+          channelId,
+          channelName,
+          imageUrl,
+        },
       });
     };
 

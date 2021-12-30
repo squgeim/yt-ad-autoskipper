@@ -7,7 +7,7 @@ import { VideoAdSkipper } from "../utils/videoAdSkipper";
 import { logger } from "../utils/logger";
 import { applyMuteAdConfig } from "../utils/adMuter";
 import { injectConfigureBtn } from "../utils/configureBtn";
-import { getChannelId, isAdPlaying } from "../utils/youtube";
+import { getChannelInfo, isAdPlaying } from "../utils/youtube";
 
 function handlePlayerMutation() {
   logger.debug("Mutation.");
@@ -22,7 +22,7 @@ function handlePlayerMutation() {
     );
 
     if (!videoAdSkipper.channelUrl) {
-      videoAdSkipper.channelUrl = getChannelId();
+      videoAdSkipper.channelUrl = getChannelInfo().channelId;
       logger.debug("channel url: ", videoAdSkipper.channelUrl);
     }
 
