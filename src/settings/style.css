@@ -24,26 +24,39 @@ body {
 
 input {
   font-size: inherit;
+  font-family: inherit;
 }
 
 .container {
   margin: 2em auto;
-  max-width: 500px;
+  max-width: 32em;
+  opacity: 1;
+  animation: animate-in 0.1s ease-in;
+}
+
+@keyframes animate-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1
+  }
 }
 
 .container h1, .container h2 {
   font-weight: normal;
-  text-transform: uppercase;
 }
 
 .license {
   padding: 2em 0;
 }
 
-h2.legend {
-  margin: 0;
-  font-size: 1em;
+h2.title {
+  margin: 1em;
+  font-size: 0.9em;
+  opacity: 0.8;
   flex: 1;
+  text-transform: uppercase;
 }
 
 .pref-box {
@@ -58,13 +71,13 @@ h2.legend {
 }
 
 .pref-box .pref-row {
-  padding: 0 1.5em;
+  padding: 1em 1.5em;
   border-bottom: 1px solid var(--bg-color);
   display: flex;
-  height: 50px;
   align-items: center;
   cursor: pointer;
   box-sizing: border-box;
+  gap: 1em;
 }
 
 .pref-box .pref-row:last-child {
@@ -72,7 +85,12 @@ h2.legend {
 }
 
 .pref-box .pref-row input {
-  width: 50px;
+  width: 2.5em;
+  text-align: right;
+}
+
+.pref-box .pref-row input[type="checkbox"] {
+  height: 1.5em;
 }
 
 .pref-box .pref-row .label {
@@ -81,12 +99,17 @@ h2.legend {
   text-decoration: none;
 }
 
-.pref-box .channel-row img {
-  height: 50%;
+.pref-desc {
+  margin: 0;
+  margin-top: 0.5em;
+  font-size: 0.8em;
+  opacity: 0.5;
+  text-transform: none;
 }
 
-.pref-box .channel-row .label {
-  margin-left: 1em;
+.pref-box .channel-row img {
+  height: 2em;
+  border-radius: 1em;
 }
 
 .channel-btns {
@@ -115,8 +138,8 @@ h2.legend {
 }
 
 .channel-logo {
-  width: 48px;
-  border-radius: 1em;
+  width: 3em;
+  border-radius: 1.5em;
 }
 
 .back-btn {
@@ -128,4 +151,8 @@ h2.legend {
   aspect-ratio: 1;
   font-family: monospace;
   cursor: pointer;
+}
+
+.channel-pref-title {
+  flex: 1;
 }

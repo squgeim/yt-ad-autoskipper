@@ -21,7 +21,7 @@ export function ChannelPref({
         <button class={"back-btn"} onClick={goHome}>
           &lt;
         </button>
-        <h2 class={"legend"}>{channelName}</h2>
+        <h2 class={"channel-pref-title"}>{channelName}</h2>
         <img className={"channel-logo"} src={imageUrl} alt={""} />
       </div>
       <ChannelPrefForm

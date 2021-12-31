@@ -55,7 +55,7 @@ function Settings() {
   const { page, pageProps, changePage } = useRoute();
 
   return (
-    <div class="container">
+    <div class="container" key={page}>
       <h1>Youtube Ad Auto-skipper</h1>
 
       {page === "pref" && (

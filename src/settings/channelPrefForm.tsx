@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "preact/compat";
+import { useEffect, useRef, useState } from "preact/compat";
 import {
   createChannel,
   DEFAULT_CONFIG,
@@ -101,12 +101,27 @@ export function ChannelPrefForm({
     <form>
       <fieldset class={"pref-box"}>
         <label class="pref-row">
-          <span class="label">Mute Ads.</span>
+          <div class="label">
+            <span>Mute Ads</span>
+            <p class="pref-desc">Ads will be muted when they start playing.</p>
+          </div>
           <input type={"checkbox"} checked={isMute} onChange={toggleIsMute} />
         </label>
 
         <label class="pref-row">
-          <span class="label">Seconds to play ad before skipping.</span>
+          <div class="label">
+            <span>Seconds to play ad before skipping</span>
+            <p class="pref-desc">
+              Ads will play for the supplied number of seconds before they are
+              skiped. The default value is 5 seconds as that is when YouTube
+              makes the "Skip Ad" button visible, but the value can be as low as
+              0, where you won't see any ads.
+            </p>
+            <p class="pref-desc">
+              You can let ads play longer for you favorite YouTubers and skip
+              them quickly for other videos.
+            </p>
+          </div>
           <input type={"number"} value={skipSecs} onChange={updateSkipSecs} />
         </label>
       </fieldset>

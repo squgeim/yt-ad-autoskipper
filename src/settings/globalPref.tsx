@@ -29,9 +29,24 @@ export function GlobalPref(props: GlobalPrefProps): Element {
 
   return (
     <>
-      <ChannelPrefForm />
       <div>
-        <h2 class="legend">Channel Preferences</h2>
+        <h2 class="title">
+          Global Preferences
+          <p class="pref-desc">
+            These preferences will be used for all videos unless there is a
+            specific configuration for a YouTube channel defined below.
+          </p>
+        </h2>
+        <ChannelPrefForm />
+      </div>
+      <div>
+        <h2 class="title">
+          Channel Preferences
+          <p class="pref-desc">
+            You can configure Ad-Skipper to have a different behavior in videos
+            by your favourite YouTubers.
+          </p>
+        </h2>
         <ul class="pref-box">
           {channels.map((channel) => (
             <li
@@ -40,7 +55,7 @@ export function GlobalPref(props: GlobalPrefProps): Element {
                 props.configureChannel(channel);
               }}
             >
-              <img src={channel.imageUrl} />
+              <img src={channel.imageUrl} alt="" />
               <a class="label" href="#">
                 {channel.channelName}
               </a>
