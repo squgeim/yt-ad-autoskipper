@@ -1,6 +1,11 @@
 import { logger } from "./logger";
 import { getShouldMuteAd } from "./config";
-import { clickMuteBtn, isAdPlaying, isVideoMuted } from "./youtube";
+import {
+  clickMuteBtn,
+  getChannelInfo,
+  isAdPlaying,
+  isVideoMuted,
+} from "./youtube";
 
 let currentState: "ad" | "video";
 
@@ -26,16 +31,13 @@ export async function applyMuteAdConfig(): Promise<void> {
     return;
   }
 
-  const channelUrl =
-    document.querySelector<HTMLAnchorElement>(
-      "ytd-video-owner-renderer ytd-channel-name a"
-    )?.href ?? "";
+  const { channelId } = getChannelInfo();
 
-  if (await getShouldMuteAd(channelUrl)) {
+  if (await getShouldMuteAd(channelId)) {
     logger.debug("video is NOT muted. Click button.");
     clickMuteBtn();
   } else {
-    logger.debug("Not muting ad for this channel: ", channelUrl);
+    logger.debug("Not muting ad for this channel: ", channelId);
   }
 }
 

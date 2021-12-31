@@ -21,9 +21,9 @@ function handlePlayerMutation() {
       elems[0]
     );
 
-    if (!videoAdSkipper.channelUrl) {
-      videoAdSkipper.channelUrl = getChannelInfo().channelId;
-      logger.debug("channel url: ", videoAdSkipper.channelUrl);
+    if (!videoAdSkipper.channelId) {
+      videoAdSkipper.channelId = getChannelInfo().channelId;
+      logger.debug("channel id: ", videoAdSkipper.channelId);
     }
 
     videoAdSkipper.skipAd();

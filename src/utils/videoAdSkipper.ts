@@ -8,7 +8,7 @@ export class VideoAdSkipper {
   static instance?: VideoAdSkipper;
   readonly #videoUrl: string;
   readonly #button: HTMLElement;
-  #channelUrl?: string;
+  #channelId?: string;
   #timeoutId?: number;
 
   static getInstance(
@@ -41,12 +41,12 @@ export class VideoAdSkipper {
     VideoAdSkipper.instance = undefined;
   }
 
-  set channelUrl(url: string) {
-    if (this.#channelUrl === url) {
+  set channelId(url: string) {
+    if (this.#channelId === url) {
       return;
     }
 
-    this.#channelUrl = url;
+    this.#channelId = url;
 
     if (this.#timeoutId) {
       clearTimeout(this.#timeoutId);
@@ -56,8 +56,8 @@ export class VideoAdSkipper {
     }
   }
 
-  get channelUrl(): string {
-    return this.#channelUrl ?? "";
+  get channelId(): string {
+    return this.#channelId ?? "";
   }
 
   async skipAd(): Promise<void> {
@@ -65,7 +65,7 @@ export class VideoAdSkipper {
       return;
     }
 
-    logger.debug("Channel url", this.#channelUrl);
+    logger.debug("Channel url", this.#channelId);
 
     // If the Skip Ad button is visible, it means that the Ad has already played
     // for 5 seconds.
@@ -76,7 +76,7 @@ export class VideoAdSkipper {
     logger.debug("Ad playback offset", adPlaybackOffset);
 
     const timeToSkipAdOffset =
-      (await getTimeToSkipAdOffset(this.#channelUrl ?? "")) * 1000;
+      (await getTimeToSkipAdOffset(this.#channelId ?? "")) * 1000;
 
     logger.debug("Time to skip ad offset", timeToSkipAdOffset);
 

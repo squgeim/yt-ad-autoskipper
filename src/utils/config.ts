@@ -104,14 +104,14 @@ async function mergeChannelConfig(
 }
 
 export async function getTimeToSkipAdOffset(
-  channelUrl?: string
+  channelId?: string
 ): Promise<number> {
   const config = await getConfig();
 
   logger.debug("getTimeToSkipOffset: ", config);
 
-  if (channelUrl && channelUrl in config.channelConfigs) {
-    return config.channelConfigs[channelUrl].timeToSkip;
+  if (channelId && channelId in config.channelConfigs) {
+    return config.channelConfigs[channelId].timeToSkip;
   }
 
   return config.globalConfig.timeToSkip;
@@ -130,13 +130,13 @@ export async function setTimeToSkipAdOffset(
   return await getTimeToSkipAdOffset();
 }
 
-export async function getShouldMuteAd(channelUrl?: string): Promise<boolean> {
+export async function getShouldMuteAd(channelId?: string): Promise<boolean> {
   const config = await getConfig();
 
   logger.debug("getIsMute: ", config);
 
-  if (channelUrl && channelUrl in config.channelConfigs) {
-    return config.channelConfigs[channelUrl].muteAd;
+  if (channelId && channelId in config.channelConfigs) {
+    return config.channelConfigs[channelId].muteAd;
   }
 
   return config.globalConfig.muteAd;
