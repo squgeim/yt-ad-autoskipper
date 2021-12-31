@@ -8,6 +8,7 @@ import { ChannelPref } from "./channelPref";
 type PAGE = "pref" | "channel";
 
 function useRoute() {
+  const [pageUpdated, setPageUpdated] = useState(false);
   const [page, setPage] = useState<PAGE>("pref");
   const [pageProps, setPageProps] = useState<Record<string, unknown>>({});
 
@@ -23,10 +24,23 @@ function useRoute() {
       }
 
       await chrome.storage.local.remove(["page", "pageProps"]);
+      setPageUpdated(false);
 
       setPage(page);
       setPageProps(pageProps);
     })();
+  }, [pageUpdated]);
+
+  useEffect(() => {
+    const handleMessage = (changes: Record<string, unknown>) => {
+      if ("page" in changes) {
+        setPageUpdated(true);
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleMessage);
+
+    return () => chrome.storage.onChanged.removeListener(handleMessage);
   }, []);
 
   const changePage = (page: PAGE, props?: Record<string, unknown>) => {
