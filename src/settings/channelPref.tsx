@@ -1,4 +1,3 @@
-import React from "preact/compat";
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
 import { ChannelPrefForm } from "./channelPrefForm";

@@ -1,62 +1,49 @@
-import React, { useEffect, useState } from "preact/compat";
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
-import {
-  getShouldMuteAd,
-  getTimeToSkipAdOffset,
-  setMuteAd,
-  setTimeToSkipAdOffset,
-} from "../utils/config";
 import { ChannelPrefForm } from "./channelPrefForm";
+import { useEffect, useState } from "preact/compat";
+import { ChannelConfig, getConfig } from "../utils/config";
 
-export function GlobalPref(): Element {
-  const [isMute, setIsMute] = useState(false);
-  const [settingsReady, setSettingsReady] = useState(false);
-  const [skipSecs, setSkipSecs] = useState(0);
+function useChannelsList() {
+  const [channels, setChannels] = useState<ChannelConfig[]>([]);
 
   useEffect(() => {
-    Promise.all([getTimeToSkipAdOffset(), getShouldMuteAd()]).then(([s, m]) => {
-      setSkipSecs(s);
-      setIsMute(m);
-      setSettingsReady(true);
+    getConfig().then((config) => {
+      setChannels(Object.values(config.channelConfigs));
     });
   }, []);
 
-  const updateSkipSecs = (val: number) => {
-    setTimeToSkipAdOffset("global", val)
-      .then((newVal) => setSkipSecs(newVal))
-      .catch(() => getTimeToSkipAdOffset().then((s) => setSkipSecs(s)));
-  };
+  return channels;
+}
 
-  const updateIsMute = (val: boolean) => {
-    setMuteAd("global", val)
-      .then((newVal) => setIsMute(newVal))
-      .catch(() => getShouldMuteAd().then((m) => setIsMute(m)));
-  };
+type GlobalPrefProps = {
+  configureChannel: (channel: ChannelConfig) => void;
+};
 
-  if (!settingsReady) {
-    return <></>;
-  }
+export function GlobalPref(props: GlobalPrefProps): Element {
+  const channels = useChannelsList();
 
   return (
     <>
       <ChannelPrefForm />
-      <fieldset>
-        <legend>
-          <h2 class="legend">Channel Preferences</h2>
-        </legend>
-
-        <p>You can customize the extension for your favorite Youtubers.</p>
-
-        <input
-          type="text"
-          title="Filter Channels"
-          placeholder="Filter Channels"
-        />
-        <div class="channel-btns">
-          <button>+</button>
-        </div>
-      </fieldset>
+      <div>
+        <h2 class="legend">Channel Preferences</h2>
+        <ul class="pref-box">
+          {channels.map((channel) => (
+            <li
+              class="pref-row channel-row"
+              onClick={() => {
+                props.configureChannel(channel);
+              }}
+            >
+              <img src={channel.imageUrl} />
+              <a class="label" href="#">
+                {channel.channelName}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 }

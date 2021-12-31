@@ -22,7 +22,7 @@ function useRoute() {
         return;
       }
 
-      // await chrome.storage.local.remove(["page", "pageProps"]);
+      await chrome.storage.local.remove(["page", "pageProps"]);
 
       setPage(page);
       setPageProps(pageProps);
@@ -47,7 +47,11 @@ function Settings() {
       {page === "pref" && (
         <>
           <License />
-          <GlobalPref />
+          <GlobalPref
+            configureChannel={(channel) => {
+              changePage("channel", channel);
+            }}
+          />
         </>
       )}
 

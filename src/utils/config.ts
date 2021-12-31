@@ -13,13 +13,13 @@ type MuteAdConfig = {
 
 type BaseConfig = TimeToSkipConfig & MuteAdConfig;
 
-type ChannelConfig = {
+export type ChannelConfig = {
   channelName: string;
   channelId: string;
   imageUrl: string;
 } & BaseConfig;
 
-type ConfigObj = {
+export type ConfigObj = {
   email: string;
   licenseKey: string;
   globalConfig: BaseConfig;
@@ -38,7 +38,7 @@ export const DEFAULT_CONFIG: ConfigObj = Object.freeze({
   channelConfigs: {},
 });
 
-function getConfig(): Promise<ConfigObj> {
+export function getConfig(): Promise<ConfigObj> {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(["config"], (result) => {
       if (chrome.runtime.lastError) {

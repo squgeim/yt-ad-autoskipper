@@ -99,14 +99,14 @@ export function ChannelPrefForm({
 
   return (
     <form>
-      <fieldset className={"pref-box"}>
-        <label>
-          <span>Mute Ads.</span>
+      <fieldset class={"pref-box"}>
+        <label class="pref-row">
+          <span class="label">Mute Ads.</span>
           <input type={"checkbox"} checked={isMute} onChange={toggleIsMute} />
         </label>
 
-        <label>
-          <span>Seconds to play ad before skipping.</span>
+        <label class="pref-row">
+          <span class="label">Seconds to play ad before skipping.</span>
           <input type={"number"} value={skipSecs} onChange={updateSkipSecs} />
         </label>
       </fieldset>

@@ -45,30 +45,47 @@ h2.legend {
   flex: 1;
 }
 
-fieldset.pref-box {
+.pref-box {
   margin-bottom: 1em;
   border-radius: 1em;
   background-color: var(--pref-box-bg);
   border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.pref-box label {
-  padding: 1em;
+.pref-box .pref-row {
+  padding: 0 1.5em;
   border-bottom: 1px solid var(--bg-color);
   display: flex;
+  height: 50px;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-.pref-box label:last-child {
+.pref-box .pref-row:last-child {
   border-bottom: none;
 }
 
-.pref-box label input {
+.pref-box .pref-row input {
   width: 50px;
 }
 
-.pref-box label span {
-  margin-right: 1em;
+.pref-box .pref-row .label {
   flex: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pref-box .channel-row img {
+  height: 50%;
+}
+
+.pref-box .channel-row .label {
+  margin-left: 1em;
 }
 
 .channel-btns {
