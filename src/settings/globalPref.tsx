@@ -9,7 +9,11 @@ function useChannelsList() {
 
   useEffect(() => {
     getConfig().then((config) => {
-      setChannels(Object.values(config.channelConfigs));
+      setChannels(
+        Object.values(config.channelConfigs).sort((a, b) =>
+          a.channelName.localeCompare(b.channelName)
+        )
+      );
     });
   }, []);
 
