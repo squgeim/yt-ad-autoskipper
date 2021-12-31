@@ -92,6 +92,7 @@ async function mergeChannelConfig(
   const newConfig: ConfigObj = {
     ...currentConfig,
     channelConfigs: {
+      ...currentConfig.channelConfigs,
       [scope]: merge<ChannelConfig>(
         currentConfig.channelConfigs[scope],
         addition
