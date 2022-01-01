@@ -2,19 +2,32 @@ import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
 import { ChannelPrefForm } from "./channelPrefForm";
 import { useEffect, useState } from "preact/compat";
-import { ChannelConfig, getConfig } from "../utils/config";
+import { ChannelConfig, getConfig, removeChannel } from "../utils/config";
 
 function useChannelsList() {
   const [channels, setChannels] = useState<ChannelConfig[]>([]);
 
   useEffect(() => {
-    getConfig().then((config) => {
-      setChannels(
-        Object.values(config.channelConfigs).sort((a, b) =>
-          a.channelName.localeCompare(b.channelName)
-        )
-      );
-    });
+    const syncChannels = () => {
+      getConfig().then((config) => {
+        setChannels(
+          Object.values(config.channelConfigs).sort((a, b) =>
+            a.channelName.localeCompare(b.channelName)
+          )
+        );
+      });
+    };
+
+    syncChannels();
+
+    const handleChange = (changes: Record<string, unknown>) => {
+      if ("config" in changes) {
+        syncChannels();
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleChange);
+    return () => chrome.storage.onChanged.removeListener(handleChange);
   }, []);
 
   return channels;
@@ -59,6 +72,16 @@ export function GlobalPref(props: GlobalPrefProps): Element {
               <a class="label" href="#">
                 {channel.channelName}
               </a>
+              <button
+                class="remove-channel-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeChannel(channel.channelId);
+                }}
+                title="Remove channel configuration"
+              >
+                x
+              </button>
             </li>
           ))}
         </ul>

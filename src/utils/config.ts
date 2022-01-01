@@ -188,3 +188,20 @@ export async function createChannel(
 
   return newConfig;
 }
+
+export async function removeChannel(channelId: string): Promise<void> {
+  const currentConfig = await getConfig();
+
+  const newChannelConfig = Object.fromEntries(
+    Object.entries(currentConfig.channelConfigs).filter(
+      ([id]) => id !== channelId
+    )
+  );
+
+  const newConfig = {
+    ...currentConfig,
+    channelConfigs: newChannelConfig,
+  };
+
+  await setConfig(newConfig);
+}

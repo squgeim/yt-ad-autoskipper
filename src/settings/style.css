@@ -112,19 +112,19 @@ h2.title {
   border-radius: 1em;
 }
 
-.channel-btns {
-  display: flex;
-  margin-top: 1em;
+.pref-box .channel-row:hover .remove-channel-btn {
+  display: block;
 }
 
-.channel-btns input {
-  flex: 1;
-  padding: 0.75em;
-}
-
-.channel-btns button {
-  padding: 0.75em;
-  font-size: 1em;
+.pref-box .channel-row .remove-channel-btn {
+  display: none;
+  background: inherit;
+  border: none;
+  height: 2em;
+  width: 2em;
+  color: white;
+  background-color: indianred;
+  border-radius: 1em;
 }
 
 .channel-pref-header {
