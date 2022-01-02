@@ -1,14 +1,9 @@
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
 import { ChannelPrefForm } from "./channelPrefForm";
-import { ChannelConfig } from "../utils/config";
 import { ChannelsList } from "./channelsList";
 
-type GlobalPrefProps = {
-  configureChannel: (channel: ChannelConfig) => void;
-};
-
-export function GlobalPref(props: GlobalPrefProps): Element {
+export function GlobalPref(): Element {
   return (
     <>
       <div>
@@ -29,7 +24,7 @@ export function GlobalPref(props: GlobalPrefProps): Element {
             by your favourite YouTubers.
           </p>
         </h2>
-        <ChannelsList configureChannel={props.configureChannel} />
+        <ChannelsList />
       </div>
     </>
   );

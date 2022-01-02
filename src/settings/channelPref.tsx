@@ -1,24 +1,30 @@
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
 import { ChannelPrefForm } from "./channelPrefForm";
+import { GO_PREF_HOME } from "../constants/actions";
 
 interface IChannelPrefProps {
   channelId: string;
   channelName: string;
   imageUrl: string;
-  goHome: () => void;
 }
 
 export function ChannelPref({
   channelId,
   channelName,
   imageUrl,
-  goHome,
 }: IChannelPrefProps): Element {
   return (
     <>
       <div class={"channel-pref-header"}>
-        <button class={"back-btn"} onClick={goHome}>
+        <button
+          class={"back-btn"}
+          onClick={() => {
+            chrome.runtime.sendMessage({
+              type: GO_PREF_HOME,
+            });
+          }}
+        >
           &lt;
         </button>
         <h2 class={"channel-pref-title"}>{channelName}</h2>

@@ -8,33 +8,33 @@ import { ChannelPref } from "./channelPref";
 type PAGE = "pref" | "channel";
 
 function useRoute() {
-  const [pageUpdated, setPageUpdated] = useState(false);
   const [page, setPage] = useState<PAGE>("pref");
   const [pageProps, setPageProps] = useState<Record<string, unknown>>({});
 
+  const handlePageChange = async () => {
+    const { page, pageProps } = await chrome.storage.local.get([
+      "page",
+      "pageProps",
+    ]);
+
+    if (!page) {
+      return;
+    }
+
+    await chrome.storage.local.remove(["page", "pageProps"]);
+
+    setPage(page);
+    setPageProps(pageProps);
+  };
+
   useEffect(() => {
-    (async () => {
-      const { page, pageProps } = await chrome.storage.local.get([
-        "page",
-        "pageProps",
-      ]);
-
-      if (!page) {
-        return;
-      }
-
-      await chrome.storage.local.remove(["page", "pageProps"]);
-      setPageUpdated(false);
-
-      setPage(page);
-      setPageProps(pageProps);
-    })();
-  }, [pageUpdated]);
+    handlePageChange();
+  }, []);
 
   useEffect(() => {
     const handleMessage = (changes: Record<string, unknown>) => {
       if ("page" in changes) {
-        setPageUpdated(true);
+        handlePageChange();
       }
     };
 
@@ -43,16 +43,11 @@ function useRoute() {
     return () => chrome.storage.onChanged.removeListener(handleMessage);
   }, []);
 
-  const changePage = (page: PAGE, props?: Record<string, unknown>) => {
-    setPage(page);
-    setPageProps(props || {});
-  };
-
-  return { page, pageProps, changePage };
+  return { page, pageProps };
 }
 
 function Settings() {
-  const { page, pageProps, changePage } = useRoute();
+  const { page, pageProps } = useRoute();
 
   return (
     <div class="container" key={page}>
@@ -61,17 +56,12 @@ function Settings() {
       {page === "pref" && (
         <>
           <License />
-          <GlobalPref
-            configureChannel={(channel) => {
-              changePage("channel", channel);
-            }}
-          />
+          <GlobalPref />
         </>
       )}
 
       {page === "channel" && (
         <ChannelPref
-          goHome={() => changePage("pref")}
           channelId={pageProps.channelId as string}
           channelName={pageProps.channelName as string}
           imageUrl={pageProps.imageUrl as string}

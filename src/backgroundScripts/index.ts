@@ -1,4 +1,4 @@
-import { CONFIGURE_CHANNEL } from "../constants/actions";
+import { CONFIGURE_CHANNEL, GO_PREF_HOME } from "../constants/actions";
 import { logger } from "../utils/logger";
 
 function configureChannel({
@@ -25,6 +25,18 @@ function configureChannel({
     });
 }
 
+function goPrefHome() {
+  logger.debug("Going home");
+  chrome.storage.local
+    .set({
+      page: `pref`,
+      pageProps: {},
+    })
+    .then(() => {
+      chrome.runtime.openOptionsPage();
+    });
+}
+
 chrome.runtime.onMessage.addListener((message) => {
   if (!("type" in message)) {
     return;
@@ -35,6 +47,9 @@ chrome.runtime.onMessage.addListener((message) => {
   switch (message.type) {
     case CONFIGURE_CHANNEL:
       configureChannel(message.channel);
+      break;
+    case GO_PREF_HOME:
+      goPrefHome();
       break;
   }
 });

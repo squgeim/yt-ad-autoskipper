@@ -1,5 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import { JSXInternal } from "preact/src/jsx";
+import { CONFIGURE_CHANNEL } from "../constants/actions";
 import { ChannelConfig, getConfig, removeChannel } from "../utils/config";
 import Element = JSXInternal.Element;
 
@@ -32,11 +33,7 @@ function useChannelsList() {
   return channels;
 }
 
-type ChannelsListProps = {
-  configureChannel: (channel: ChannelConfig) => void;
-};
-
-export function ChannelsList(props: ChannelsListProps): Element {
+export function ChannelsList(): Element {
   const channels = useChannelsList();
 
   return (
@@ -45,7 +42,11 @@ export function ChannelsList(props: ChannelsListProps): Element {
         <li
           class="pref-row channel-row"
           onClick={() => {
-            props.configureChannel(channel);
+            //props.configureChannel(channel);
+            chrome.runtime.sendMessage({
+              type: CONFIGURE_CHANNEL,
+              channel: channel,
+            });
           }}
         >
           <img src={channel.imageUrl} alt="" />
