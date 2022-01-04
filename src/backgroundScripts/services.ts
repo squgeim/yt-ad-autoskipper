@@ -1,6 +1,34 @@
 import { logger } from "../utils/logger";
 import { AuthUser } from "../utils/types";
-import { fetchSubscriptionForSession, fetchSubscriptionForUser } from "./api";
+import {
+  fetchSubscriptionForSession,
+  fetchSubscriptionForUser,
+  isSubscriptionActive,
+} from "./api";
+
+type CheckoutSession = {
+  expireAt: number;
+  sessionId: string;
+  user: AuthUser;
+};
+
+type Subscription = {
+  subscriptionId: string;
+  user: AuthUser;
+  nextSyncAt: number;
+};
+
+function storeSubscription(sub: { subscriptionId: string }, user: AuthUser) {
+  const subscription: Subscription = {
+    ...sub,
+    user,
+    nextSyncAt: Date.now() + 24 * 60 * 60 * 1000,
+  };
+
+  return chrome.storage.local.set({
+    subscription,
+  });
+}
 
 export function configureChannel({
   channelId,
@@ -45,12 +73,7 @@ export async function loginSuccess(
   const res = await fetchSubscriptionForUser(user.stsTokenManager.accessToken);
 
   if ("subscribed" in res && res.subscribed) {
-    await chrome.storage.local.set({
-      subscription: {
-        user,
-        ...res,
-      },
-    });
+    await storeSubscription(res, user);
 
     chrome.runtime.openOptionsPage();
     await chrome.tabs.remove(tab.id as number);
@@ -59,12 +82,13 @@ export async function loginSuccess(
   }
 
   if ("checkoutUrl" in res && res.checkoutUrl) {
+    const checkoutSession: CheckoutSession = {
+      expireAt: Date.now() + 24 * 60 * 60 * 1000, // expire in 24 hour
+      sessionId: res.sessionId,
+      user: user,
+    };
     await chrome.storage.local.set({
-      checkoutSession: {
-        expireAt: Date.now() + 24 * 60 * 60 * 1000, // expire in 24 hour
-        sessionId: res.sessionId,
-        user: user,
-      },
+      checkoutSession,
     });
     await chrome.tabs.update(tab.id as number, {
       url: res.checkoutUrl,
@@ -89,9 +113,9 @@ export async function completeCheckout(
   }
 
   try {
-    const { checkoutSession } = await chrome.storage.local.get([
-      "checkoutSession",
-    ]);
+    const checkoutSession: CheckoutSession | null = await chrome.storage.local
+      .get(["checkoutSession"])
+      .then((data) => data.checkoutSession);
 
     if (!checkoutSession || checkoutSession.expireAt < Date.now()) {
       throw new Error();
@@ -100,12 +124,7 @@ export async function completeCheckout(
     const sub = await fetchSubscriptionForSession(checkoutSession.sessionId);
 
     if (sub.subscribed) {
-      await chrome.storage.local.set({
-        subscription: {
-          user: checkoutSession.user,
-          ...sub,
-        },
-      });
+      await storeSubscription(sub, checkoutSession.user);
       await chrome.storage.local.remove(["checkoutSession"]);
     }
   } catch (err) {
@@ -114,4 +133,29 @@ export async function completeCheckout(
 
   chrome.runtime.openOptionsPage();
   await chrome.tabs.remove(tab.id as number);
+}
+
+export async function verifySubscription(): Promise<void> {
+  const subscription: Subscription = await chrome.storage.local
+    .get(["subscription"])
+    .then((v) => v.subscription);
+
+  logger.debug("Verifying subscription: ", subscription);
+
+  if (!subscription) {
+    return;
+  }
+
+  const { subscriptionId, nextSyncAt } = subscription;
+
+  if (nextSyncAt > Date.now()) {
+    return;
+  }
+
+  if (await isSubscriptionActive(subscriptionId)) {
+    await storeSubscription(subscription, subscription.user);
+    return;
+  }
+
+  await chrome.storage.local.remove("subscription");
 }

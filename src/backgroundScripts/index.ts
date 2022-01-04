@@ -1,10 +1,15 @@
-import { CONFIGURE_CHANNEL, GO_PREF_HOME } from "../constants/actions";
+import {
+  CONFIGURE_CHANNEL,
+  GO_PREF_HOME,
+  VERIFY_SUBSCRIPTION,
+} from "../constants/actions";
 import { logger } from "../utils/logger";
 import {
   completeCheckout,
   configureChannel,
   goPrefHome,
   loginSuccess,
+  verifySubscription,
 } from "./services";
 
 chrome.runtime.onMessage.addListener((message) => {
@@ -20,6 +25,9 @@ chrome.runtime.onMessage.addListener((message) => {
       break;
     case GO_PREF_HOME:
       goPrefHome();
+      break;
+    case VERIFY_SUBSCRIPTION:
+      verifySubscription();
       break;
   }
 });

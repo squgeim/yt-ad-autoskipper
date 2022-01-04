@@ -8,6 +8,7 @@ import { logger } from "../utils/logger";
 import { applyMuteAdConfig } from "../utils/adMuter";
 import { injectConfigureBtn } from "../utils/configureBtn";
 import { getChannelInfo, isAdPlaying } from "../utils/youtube";
+import { VERIFY_SUBSCRIPTION } from "../constants/actions";
 
 function handlePlayerMutation() {
   logger.debug("Mutation.");
@@ -75,6 +76,10 @@ function main() {
   if (isInIframe()) {
     return;
   }
+
+  chrome.runtime.sendMessage({
+    type: VERIFY_SUBSCRIPTION,
+  });
 
   injectConfigureBtn();
   initSkipAdBtnObserver();

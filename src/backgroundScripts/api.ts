@@ -48,3 +48,19 @@ export async function fetchSubscriptionForSession(sessionId: string): Promise<{
 
   throw new Error(res.error?.message);
 }
+
+export async function isSubscriptionActive(
+  subscriptionId: string
+): Promise<boolean> {
+  const res = await fetch(
+    `${BASE_URL}/fns/v1/fetch_subscription/${subscriptionId}`
+  ).then((res) => res.json());
+
+  logger.debug("fetch subscription: ", res);
+
+  if ("subscribed" in res && res.subscribed) {
+    return true;
+  }
+
+  return false;
+}
