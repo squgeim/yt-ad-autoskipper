@@ -22,6 +22,15 @@ body {
   font-weight: 300;
 }
 
+a:link,
+a:visited {
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
 input {
   font-size: inherit;
   font-family: inherit;
@@ -59,6 +68,7 @@ h2.title {
   text-transform: uppercase;
 }
 
+.license,
 .pref-box {
   margin-bottom: 1em;
   border-radius: 1em;
@@ -155,4 +165,34 @@ h2.title {
 
 .channel-pref-title {
   flex: 1;
+}
+
+.license {
+  padding: 1em 1.5em;
+}
+
+.license-btns {
+  display: flex;
+  gap: 1em;
+}
+
+.license-btns .btn {
+  flex: 1;
+  padding: 1em;
+  background: rgba(0,0,0,0.1);
+  border-radius: 1em;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+  display: block;
+  text-decoration: none;
+  text-align: center;
+}
+
+.license-btns .btn:hover {
+  text-decoration: underline;
+}
+
+.license-btns .btn-primary {
+  background: darkslateblue;
 }

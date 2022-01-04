@@ -1,41 +1,11 @@
 import { CONFIGURE_CHANNEL, GO_PREF_HOME } from "../constants/actions";
 import { logger } from "../utils/logger";
-
-function configureChannel({
-  channelId,
-  channelName,
-  imageUrl,
-}: {
-  channelId: string;
-  channelName: string;
-  imageUrl: string;
-}) {
-  logger.debug("ChannelId: ", channelId);
-  chrome.storage.local
-    .set({
-      page: `channel`,
-      pageProps: {
-        channelId,
-        channelName,
-        imageUrl,
-      },
-    })
-    .then(() => {
-      chrome.runtime.openOptionsPage();
-    });
-}
-
-function goPrefHome() {
-  logger.debug("Going home");
-  chrome.storage.local
-    .set({
-      page: `pref`,
-      pageProps: {},
-    })
-    .then(() => {
-      chrome.runtime.openOptionsPage();
-    });
-}
+import {
+  completeCheckout,
+  configureChannel,
+  goPrefHome,
+  loginSuccess,
+} from "./services";
 
 chrome.runtime.onMessage.addListener((message) => {
   if (!("type" in message)) {
@@ -50,6 +20,24 @@ chrome.runtime.onMessage.addListener((message) => {
       break;
     case GO_PREF_HOME:
       goPrefHome();
+      break;
+  }
+});
+
+chrome.runtime.onMessageExternal.addListener((message, sender) => {
+  if (!("type" in message)) {
+    return;
+  }
+
+  logger.debug("External message received: ", message);
+
+  switch (message.type) {
+    case "LOGIN_SUCCESS": {
+      loginSuccess(message.user, sender.tab as chrome.tabs.Tab);
+      break;
+    }
+    case "COMPLETE_CHECKOUT":
+      completeCheckout(message.success, sender.tab as chrome.tabs.Tab);
       break;
   }
 });
