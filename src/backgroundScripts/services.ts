@@ -1,5 +1,5 @@
 import { logger } from "../utils/logger";
-import { AuthUser } from "../utils/types";
+import { AuthUser, Subscription } from "../utils/types";
 import {
   fetchSubscriptionForSession,
   fetchSubscriptionForUser,
@@ -10,12 +10,6 @@ type CheckoutSession = {
   expireAt: number;
   sessionId: string;
   user: AuthUser;
-};
-
-type Subscription = {
-  subscriptionId: string;
-  user: AuthUser;
-  nextSyncAt: number;
 };
 
 function storeSubscription(sub: { subscriptionId: string }, user: AuthUser) {

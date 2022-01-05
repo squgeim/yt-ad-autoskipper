@@ -6,3 +6,9 @@ export type AuthUser = {
     refreshToken: string;
   };
 };
+
+export type Subscription = {
+  subscriptionId: string;
+  user: AuthUser;
+  nextSyncAt: number;
+};

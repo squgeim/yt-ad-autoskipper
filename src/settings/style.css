@@ -169,6 +169,7 @@ h2.title {
 
 .license {
   padding: 1em 1.5em;
+  margin-bottom: 3em;
 }
 
 .license-btns {
@@ -195,4 +196,9 @@ h2.title {
 
 .license-btns .btn-primary {
   background: darkslateblue;
+}
+
+.pref-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }

@@ -4,6 +4,9 @@ import { render } from "preact";
 import { License } from "./license";
 import { GlobalPref } from "./globalPref";
 import { ChannelPref } from "./channelPref";
+import { logger } from "../utils/logger";
+import { AuthUser } from "../utils/types";
+import { getSubscription } from "../utils/config";
 
 type PAGE = "pref" | "channel";
 
@@ -46,7 +49,26 @@ function useRoute() {
   return { page, pageProps };
 }
 
+function useUser() {
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  const getUserFromStorage = async () => {
+    const subscription = await getSubscription();
+
+    logger.debug("subscription", subscription);
+
+    setUser(subscription?.user || null);
+  };
+
+  useEffect(() => {
+    getUserFromStorage();
+  }, []);
+
+  return user;
+}
+
 function Settings() {
+  const user = useUser();
   const { page, pageProps } = useRoute();
 
   return (
@@ -55,13 +77,14 @@ function Settings() {
 
       {page === "pref" && (
         <>
-          <License />
-          <GlobalPref />
+          <License user={user} />
+          <GlobalPref isDisabled={!user} />
         </>
       )}
 
       {page === "channel" && (
         <ChannelPref
+          isDisabled={!user}
           channelId={pageProps.channelId as string}
           channelName={pageProps.channelName as string}
           imageUrl={pageProps.imageUrl as string}

@@ -5,7 +5,7 @@ import {
   getChannelConfig,
   getShouldMuteAd,
   getTimeToSkipAdOffset,
-  setMuteAd,
+  setShouldMuteAd,
   setTimeToSkipAdOffset,
 } from "../utils/config";
 import { JSXInternal } from "preact/src/jsx";
@@ -67,7 +67,7 @@ function useConfig(
 
   const toggleIsMute = () => {
     createChannelIfRequired()
-      .then(() => setMuteAd(channelId || "global", !isMute))
+      .then(() => setShouldMuteAd(channelId || "global", !isMute))
       .then((newVal) => setIsMute(newVal))
       .catch(() => getShouldMuteAd().then((m) => setIsMute(m)));
   };

@@ -3,9 +3,9 @@ import Element = JSXInternal.Element;
 import { ChannelPrefForm } from "./channelPrefForm";
 import { ChannelsList } from "./channelsList";
 
-export function GlobalPref(): Element {
+export function GlobalPref({ isDisabled }: { isDisabled: boolean }): Element {
   return (
-    <>
+    <div class={[isDisabled && "pref-disabled"].filter(Boolean).join(" ")}>
       <div>
         <h2 class="title">
           Global Preferences
@@ -26,6 +26,6 @@ export function GlobalPref(): Element {
         </h2>
         <ChannelsList />
       </div>
-    </>
+    </div>
   );
 }

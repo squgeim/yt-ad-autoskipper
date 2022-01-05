@@ -2,6 +2,7 @@ import merge from "deepmerge";
 import { logger } from "./logger";
 
 import { AD_PLAYBACK_OFFSET } from "../constants/youtube";
+import { Subscription } from "./types";
 
 type TimeToSkipConfig = {
   timeToSkip: number;
@@ -20,8 +21,6 @@ export type ChannelConfig = {
 } & BaseConfig;
 
 export type ConfigObj = {
-  email: string;
-  licenseKey: string;
   globalConfig: BaseConfig;
   channelConfigs: Record<string, ChannelConfig>;
 };
@@ -29,8 +28,6 @@ export type ConfigObj = {
 type Scope = "global" | string;
 
 export const DEFAULT_CONFIG: ConfigObj = Object.freeze({
-  email: "",
-  licenseKey: "",
   globalConfig: {
     timeToSkip: AD_PLAYBACK_OFFSET,
     muteAd: false,
@@ -38,32 +35,34 @@ export const DEFAULT_CONFIG: ConfigObj = Object.freeze({
   channelConfigs: {},
 });
 
-export function getConfig(): Promise<ConfigObj> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get(["config"], (result) => {
-      if (chrome.runtime.lastError) {
-        return reject(chrome.runtime.lastError);
-      }
+export async function getSubscription(): Promise<Subscription | null> {
+  const { subscription } = await chrome.storage.local.get(["subscription"]);
 
-      if (!result.config) {
-        resolve(DEFAULT_CONFIG);
-      }
-
-      resolve(result.config);
-    });
-  });
+  return subscription;
 }
 
-function setConfig(config: ConfigObj): Promise<void> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.set({ config }, () => {
-      if (chrome.runtime.lastError) {
-        return reject(chrome.runtime.lastError);
-      }
+export async function getConfig(): Promise<ConfigObj> {
+  const { config, subscription } = await chrome.storage.local.get([
+    "config",
+    "subscription",
+  ]);
 
-      resolve(undefined);
-    });
-  });
+  if (!config || !subscription?.subscriptionId) {
+    return DEFAULT_CONFIG;
+  }
+
+  return config;
+}
+
+async function setConfig(config: ConfigObj): Promise<void> {
+  const subscription = await getSubscription();
+
+  if (!subscription?.subscriptionId) {
+    logger.debug("not setting config because user does not have subscription.");
+    return;
+  }
+
+  return await chrome.storage.local.set({ config });
 }
 
 async function mergeChannelConfig(
@@ -142,7 +141,7 @@ export async function getShouldMuteAd(channelId?: string): Promise<boolean> {
   return config.globalConfig.muteAd;
 }
 
-export async function setMuteAd(
+export async function setShouldMuteAd(
   scope: Scope,
   value: boolean
 ): Promise<boolean> {
@@ -167,7 +166,7 @@ export async function createChannel(
   channelId: string,
   channelName: string,
   imageUrl: string
-): Promise<ConfigObj> {
+): Promise<void> {
   const currentConfig = await getConfig();
 
   const newConfig: ConfigObj = {
@@ -185,8 +184,6 @@ export async function createChannel(
   };
 
   await setConfig(newConfig);
-
-  return newConfig;
 }
 
 export async function removeChannel(channelId: string): Promise<void> {

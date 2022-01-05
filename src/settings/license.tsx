@@ -1,6 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
 import { JSXInternal } from "preact/src/jsx";
-import { logger } from "../utils/logger";
 import { AuthUser } from "../utils/types";
 import Element = JSXInternal.Element;
 
@@ -9,27 +7,7 @@ const BASE_URL =
     ? "https://ad-auto-skipper.web.app"
     : "http://localhost:5000";
 
-function useUser() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-
-  const getUserFromStorage = async () => {
-    const { subscription } = await chrome.storage.local.get(["subscription"]);
-
-    logger.debug("subscription", subscription);
-
-    setUser(subscription?.user || {});
-  };
-
-  useEffect(() => {
-    getUserFromStorage();
-  }, []);
-
-  return user;
-}
-
-export function License(): Element {
-  const user = useUser();
-
+export function License({ user }: { user: AuthUser | null }): Element {
   return (
     <section class="license">
       <h1>{["Hi", user?.displayName?.split(" ")[0]].join(" ").trim()}!</h1>
