@@ -153,9 +153,7 @@
       return false;
     }
 
-    var ytdPlayer = (function(nodeList) {
-      return nodeList && nodeList[0];
-    })(document.getElementsByTagName('ytd-player'));
+    var ytdPlayer = document.querySelector('ytd-player#ytd-player');
 
     if (!ytdPlayer) {
       return false;
