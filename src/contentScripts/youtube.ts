@@ -50,7 +50,9 @@ function initSkipAdBtnObserver() {
     return;
   }
 
-  const ytdPlayer = document.querySelector<HTMLElement>("ytd-player");
+  const ytdPlayer = document.querySelector<HTMLElement>(
+    "ytd-player#ytd-player"
+  );
 
   if (!ytdPlayer) {
     // If we don't have the video player in the DOM yet, we just try again every
