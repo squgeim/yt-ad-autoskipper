@@ -172,9 +172,16 @@ h2.title {
   margin-bottom: 3em;
 }
 
+.license p {
+  line-height: 1.3em;
+  margin-bottom: 1em;
+  margin-top: 0.25em;
+}
+
 .license-btns {
   display: flex;
-  gap: 1em;
+  flex-direction: column;
+  text-align: center;
 }
 
 .license-btns .btn {
@@ -196,6 +203,11 @@ h2.title {
 
 .license-btns .btn-primary {
   background: darkslateblue;
+  color: white;
+}
+
+.license-btns p {
+  opacity: 0.5;
 }
 
 .pref-disabled {
