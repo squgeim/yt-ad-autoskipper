@@ -33,8 +33,28 @@ function useChannelsList() {
   return channels;
 }
 
+function EmptyChannelList(): Element {
+  return (
+    <div class="pref-box empty-channel-list">
+      <p>You have not configured any channels yet!</p>
+      <p>
+        Find Ad Skipper besides the Subscribe button when watching a YouTube
+        video. Click on it to configure the extension for that channel.
+      </p>
+      <img
+        src="./preview.png"
+        alt="Pointing out Ad Skipper button besides Subscribe button in YouTube."
+      />
+    </div>
+  );
+}
+
 export function ChannelsList(): Element {
   const channels = useChannelsList();
+
+  if (!channels.length) {
+    return <EmptyChannelList />;
+  }
 
   return (
     <ul class="pref-box">
@@ -42,7 +62,6 @@ export function ChannelsList(): Element {
         <li
           class="pref-row channel-row"
           onClick={() => {
-            //props.configureChannel(channel);
             chrome.runtime.sendMessage({
               type: CONFIGURE_CHANNEL,
               channel: channel,

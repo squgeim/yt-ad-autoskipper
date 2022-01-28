@@ -220,3 +220,12 @@ h2.title {
   font-size: 0.9em;
   text-align: center;
 }
+
+.empty-channel-list {
+  padding-top: 1em;
+}
+
+.empty-channel-list p {
+  margin: 0 1.5em 1em;
+  padding: 0;
+}

@@ -41,7 +41,7 @@ export default [
       copy({
         targets: [
           { src: "src/dist/*", dest: "build" },
-          { src: "src/settings/*.(html|css)", dest: "build/pages" },
+          { src: "src/settings/*.(html|css|png)", dest: "build/pages" },
         ],
         verbose: true,
       }),
