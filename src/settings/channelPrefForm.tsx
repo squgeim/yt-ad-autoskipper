@@ -8,6 +8,7 @@ import {
   setShouldMuteAd,
   setTimeToSkipAdOffset,
 } from "../utils/config";
+import { logger } from "../utils/logger";
 import { JSXInternal } from "preact/src/jsx";
 import Element = JSXInternal.Element;
 import TargetedEvent = JSXInternal.TargetedEvent;
@@ -23,6 +24,8 @@ function useConfig(
 
   useEffect(() => {
     getChannelConfig(channelId || "global").then((config) => {
+      logger.debug("initializing form with config: ", config);
+
       if (!config) {
         setSkipSecs(DEFAULT_CONFIG.globalConfig.timeToSkip);
         setIsMute(DEFAULT_CONFIG.globalConfig.muteAd);

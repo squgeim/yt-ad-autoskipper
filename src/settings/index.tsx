@@ -92,7 +92,7 @@ function Settings() {
         />
       )}
 
-      {user && <LicenseFooter />}
+      {user && page === "pref" && <LicenseFooter />}
     </div>
   );
 }

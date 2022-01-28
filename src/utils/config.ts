@@ -155,9 +155,13 @@ export async function setShouldMuteAd(
 }
 
 export async function getChannelConfig(
-  channelId: string
-): Promise<ChannelConfig | undefined> {
+  channelId: Scope
+): Promise<ChannelConfig | BaseConfig | undefined> {
   const currentConfig = await getConfig();
+
+  if (channelId === "global") {
+    return currentConfig.globalConfig;
+  }
 
   return currentConfig.channelConfigs[channelId];
 }
