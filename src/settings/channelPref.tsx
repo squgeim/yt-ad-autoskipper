@@ -45,6 +45,7 @@ export function ChannelPref({
         channelId={channelId}
         channelName={channelName}
         imageUrl={imageUrl}
+        isDisabled={isDisabled}
       />
     </>
   );

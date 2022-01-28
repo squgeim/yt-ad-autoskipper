@@ -14,7 +14,7 @@ export function GlobalPref({ isDisabled }: { isDisabled: boolean }): Element {
             specific configuration for a YouTube channel defined below.
           </p>
         </h2>
-        <ChannelPrefForm />
+        <ChannelPrefForm isDisabled={isDisabled} />
       </div>
       <div>
         <h2 class="title">

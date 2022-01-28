@@ -84,12 +84,14 @@ type ChannelPrefFormProps = {
   channelId?: string;
   channelName?: string;
   imageUrl?: string;
+  isDisabled?: boolean;
 };
 
 export function ChannelPrefForm({
   channelId,
   channelName,
   imageUrl,
+  isDisabled,
 }: ChannelPrefFormProps): Element {
   const { isMute, skipSecs, toggleIsMute, updateSkipSecs } = useConfig(
     channelId,
@@ -105,7 +107,12 @@ export function ChannelPrefForm({
             <span>Mute Ads</span>
             <p class="pref-desc">Ads will be muted when they start playing.</p>
           </div>
-          <input type={"checkbox"} checked={isMute} onChange={toggleIsMute} />
+          <input
+            disabled={isDisabled}
+            type={"checkbox"}
+            checked={isMute}
+            onChange={toggleIsMute}
+          />
         </label>
 
         <label class="pref-row">
@@ -122,7 +129,12 @@ export function ChannelPrefForm({
               them quickly for other videos.
             </p>
           </div>
-          <input type={"number"} value={skipSecs} onChange={updateSkipSecs} />
+          <input
+            disabled={isDisabled}
+            type={"number"}
+            value={skipSecs}
+            onChange={updateSkipSecs}
+          />
         </label>
       </fieldset>
     </form>

@@ -85,14 +85,14 @@ function Settings() {
 
       {page === "channel" && (
         <ChannelPref
-          isDisabled={!user}
           channelId={pageProps.channelId as string}
           channelName={pageProps.channelName as string}
           imageUrl={pageProps.imageUrl as string}
+          isDisabled={!user}
         />
       )}
 
-      <LicenseFooter />
+      {user && <LicenseFooter />}
     </div>
   );
 }
