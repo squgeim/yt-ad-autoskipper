@@ -1,11 +1,7 @@
 import { JSXInternal } from "preact/src/jsx";
+import { API } from "../constants/api";
 import { AuthUser } from "../utils/types";
 import Element = JSXInternal.Element;
-
-const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://ad-auto-skipper.web.app"
-    : "http://localhost:5000";
 
 export function License({ user }: { user: AuthUser | null }): Element {
   return (
@@ -33,14 +29,12 @@ export function License({ user }: { user: AuthUser | null }): Element {
             remain free.
           </p>
           <div class="license-btns">
-            <a class="btn btn-primary" href={`${BASE_URL}/login.html?signup=1`}>
+            <a class="btn btn-primary" href={API.SIGNUP}>
               Sign me up for $7 per year
             </a>
             <p>
               Are you already a supporter?{" "}
-              <a href={`${BASE_URL}/login.html`}>
-                Click here to unlock all features.
-              </a>
+              <a href={API.ACTIVATE}>Click here to unlock all features.</a>
             </p>
           </div>
         </>

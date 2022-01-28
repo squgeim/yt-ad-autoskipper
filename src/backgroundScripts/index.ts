@@ -38,6 +38,7 @@ chrome.runtime.onMessageExternal.addListener((message, sender) => {
   }
 
   logger.debug("External message received: ", message);
+  logger.debug("Message from: ", sender.tab);
 
   switch (message.type) {
     case "LOGIN_SUCCESS": {

@@ -7,6 +7,7 @@ import { ChannelPref } from "./channelPref";
 import { logger } from "../utils/logger";
 import { AuthUser } from "../utils/types";
 import { getSubscription } from "../utils/config";
+import { LicenseFooter } from "./LicenseFooter";
 
 type PAGE = "pref" | "channel";
 
@@ -90,6 +91,8 @@ function Settings() {
           imageUrl={pageProps.imageUrl as string}
         />
       )}
+
+      <LicenseFooter />
     </div>
   );
 }

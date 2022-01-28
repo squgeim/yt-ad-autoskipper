@@ -4,6 +4,15 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import replace from "rollup-plugin-replace";
 
+const commonPlugins = [
+  nodeResolve(),
+  replace({
+    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+  }),
+  commonjs(),
+  typescript(),
+];
+
 export default [
   {
     input: "src/contentScripts/youtube.ts",
@@ -11,7 +20,7 @@ export default [
       file: "build/youtube.js",
       format: "cjs",
     },
-    plugins: [nodeResolve(), commonjs(), typescript()],
+    plugins: [...commonPlugins],
   },
   {
     input: "src/backgroundScripts/index.ts",
@@ -19,14 +28,7 @@ export default [
       file: "build/background.js",
       format: "esm",
     },
-    plugins: [
-      nodeResolve(),
-      replace({
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      }),
-      commonjs(),
-      typescript(),
-    ],
+    plugins: [...commonPlugins],
   },
   {
     input: "src/settings/index.tsx",
@@ -35,12 +37,7 @@ export default [
       format: "esm",
     },
     plugins: [
-      nodeResolve(),
-      replace({
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      }),
-      commonjs(),
-      typescript(),
+      ...commonPlugins,
       copy({
         targets: [
           { src: "src/dist/*", dest: "build" },

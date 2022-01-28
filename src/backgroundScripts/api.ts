@@ -64,3 +64,18 @@ export async function isSubscriptionActive(
 
   return false;
 }
+
+export async function cancelSubscription(
+  token: string
+): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE_URL}/fns/v1/cancel_subscription`, {
+    method: "POST",
+    headers: {
+      token,
+    },
+  }).then((res) => res.json());
+
+  logger.debug("cancel subscription: ", res);
+
+  return res;
+}

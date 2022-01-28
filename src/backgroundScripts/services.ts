@@ -1,6 +1,7 @@
 import { logger } from "../utils/logger";
 import { AuthUser, Subscription } from "../utils/types";
 import {
+  cancelSubscription,
   fetchSubscriptionForSession,
   fetchSubscriptionForUser,
   isSubscriptionActive,
@@ -64,6 +65,26 @@ export async function loginSuccess(
   user: AuthUser,
   tab: chrome.tabs.Tab
 ): Promise<void> {
+  const url = (() => {
+    try {
+      return new URL(tab.url || "");
+    } catch {
+      return null;
+    }
+  })();
+
+  if (url?.href.includes("cancel=1")) {
+    const res = await cancelSubscription(user.stsTokenManager.accessToken);
+
+    if (res.success) {
+      await chrome.storage.local.remove("subscription");
+      chrome.runtime.openOptionsPage();
+      await chrome.tabs.remove(tab.id as number);
+    }
+
+    return;
+  }
+
   const res = await fetchSubscriptionForUser(user.stsTokenManager.accessToken);
 
   if ("subscribed" in res && res.subscribed) {
