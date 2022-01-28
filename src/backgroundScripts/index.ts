@@ -51,6 +51,22 @@ chrome.runtime.onMessageExternal.addListener((message, sender) => {
   }
 });
 
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.runtime.openOptionsPage();
+
+    return;
+  }
+
+  if (details.reason === "update") {
+    chrome.storage.local.get(["subscription"]).then(({ subscription }) => {
+      if (!subscription) {
+        chrome.runtime.openOptionsPage();
+      }
+    });
+  }
+});
+
 chrome.action.onClicked.addListener(() => {
   chrome.runtime.openOptionsPage();
 });

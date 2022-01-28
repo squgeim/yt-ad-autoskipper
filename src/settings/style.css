@@ -207,7 +207,17 @@ h2.title {
 }
 
 .license-btns p {
-  opacity: 0.5;
+  opacity: 0.8;
+}
+
+p.license-highlight {
+  font-weight: bold;
+  margin-bottom: 2em;
+}
+
+.license-highlight span {
+  border-bottom: solid 0.7em orange;
+  text-transform: uppercase;
 }
 
 .pref-disabled {

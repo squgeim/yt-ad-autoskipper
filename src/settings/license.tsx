@@ -20,17 +20,17 @@ export function License({ user }: { user: AuthUser | null }): Element {
           </p>
           <p>
             I only request 3 cups of coffee ☕️ per year to support the
-            development of this extension. Your support will unlock new features
+            development of this extension. Your support will unlock features
             such as muting ads and configuring ad playback length that can also
             be configured for your favorite YouTubers.
           </p>
-          <p>
-            The original functionality of automatically skipping ads will always
-            remain free.
+          <p class="license-highlight">
+            The original functionality of automatically skipping ads is and will{" "}
+            <span>always remain FREE!</span>
           </p>
           <div class="license-btns">
             <a class="btn btn-primary" href={API.SIGNUP}>
-              Sign me up for $7 per year
+              Unlock additional features for $7 per year
             </a>
             <p>
               Are you already a supporter?{" "}
