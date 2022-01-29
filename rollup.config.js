@@ -8,6 +8,7 @@ const commonPlugins = [
   nodeResolve(),
   replace({
     "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+    "process.env.DEBUG": JSON.stringify(process.env.DEBUG),
   }),
   commonjs(),
   typescript(),

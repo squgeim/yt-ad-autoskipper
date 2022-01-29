@@ -2,7 +2,7 @@ import { logger } from "../utils/logger";
 
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://ad-auto-skipper.web.app/"
+    ? "https://ad-auto-skipper.web.app"
     : "http://localhost:5000";
 
 export async function fetchSubscriptionForUser(

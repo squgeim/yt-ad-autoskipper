@@ -1,4 +1,5 @@
-const __DEBUG__ = process.env.NODE_ENV !== "production";
+const __DEBUG__ =
+  process.env.NODE_ENV !== "production" || process.env.DEBUG === "true";
 
 function debug(...args: unknown[]): void {
   return __DEBUG__ ? console.log("[yt-ad-skipper:debug]", ...args) : void 0;
