@@ -15,7 +15,7 @@ export function injectConfigureBtn(): void {
     btn.id = "yas_config_channel_btn";
     btn.title = "Configure ad skipping for this channel";
     btn.innerHTML = `
-      <img height="100%" src="https://github.com/squgeim/yt-ad-autoskipper/raw/master/logo.png" alt="" />
+      <img height="100%" src="https://github.com/squgeim/yt-ad-autoskipper/raw/master/src/dist/logo.png" alt="" />
     `;
     btn.style.height = "36px";
     btn.style.marginTop = "6px";
