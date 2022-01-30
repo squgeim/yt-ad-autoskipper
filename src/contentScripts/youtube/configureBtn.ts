@@ -1,7 +1,7 @@
-import { getChannelInfo, isVideoPage } from "./youtube";
-import { logger } from "./logger";
-import { CONFIGURE_CHANNEL } from "../constants/actions";
-import { Events, YouTubeEvents } from "./youtubeEvents";
+import { CONFIGURE_CHANNEL } from "../../constants/actions";
+import { logger } from "../../utils/logger";
+import { isVideoPage, getChannelInfo } from "../../utils/youtubeDOM";
+import { YouTubeEvents, Events } from "../../utils/youtubeEvents";
 
 export class ConfigureChannelBtn {
   public setupListeners(): void {

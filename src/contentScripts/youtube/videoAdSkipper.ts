@@ -1,10 +1,8 @@
-import { clickElem, getElementsByClassNames } from "./dom";
-import { SKIP_AD_BTN_CLASSES } from "../constants/youtube";
-import { getTimeToSkipAdOffset } from "./config";
-import { addMilliseconds } from "./datetime";
-import { logger } from "./logger";
-import { Events, YouTubeEvents } from "./youtubeEvents";
-import { getChannelInfo } from "./youtube";
+import { getTimeToSkipAdOffset } from "../../utils/config";
+import { addMilliseconds } from "../../utils/datetime";
+import { logger } from "../../utils/logger";
+import { Events, YouTubeEvents } from "../../utils/youtubeEvents";
+import { clickSkipAdBtn, getChannelInfo } from "../../utils/youtubeDOM";
 
 export class VideoAdSkipper {
   #skipAt: Date | null = null;
@@ -41,9 +39,7 @@ export class VideoAdSkipper {
     }
 
     if (this.#skipAt <= new Date()) {
-      const elems = getElementsByClassNames(SKIP_AD_BTN_CLASSES);
-      logger.debug("clicking on elems: ", elems);
-      elems.forEach((el) => clickElem(el));
+      clickSkipAdBtn();
       this.teardown();
     }
   }

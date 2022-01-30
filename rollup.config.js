@@ -16,7 +16,7 @@ const commonPlugins = [
 
 export default [
   {
-    input: "src/contentScripts/youtube.ts",
+    input: "src/contentScripts/youtube/index.ts",
     output: {
       file: "build/youtube.js",
       format: "cjs",

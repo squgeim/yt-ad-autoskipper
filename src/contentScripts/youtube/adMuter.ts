@@ -1,7 +1,11 @@
-import { logger } from "./logger";
-import { getShouldMuteAd } from "./config";
-import { clickMuteBtn, getChannelInfo, isVideoMuted } from "./youtube";
-import { Events, YouTubeEvents } from "./youtubeEvents";
+import { logger } from "../../utils/logger";
+import { getShouldMuteAd } from "../../utils/config";
+import {
+  clickMuteBtn,
+  getChannelInfo,
+  isVideoMuted,
+} from "../../utils/youtubeDOM";
+import { Events, YouTubeEvents } from "../../utils/youtubeEvents";
 
 export class AdMuter {
   public setupListeners(): void {

@@ -1,9 +1,9 @@
-import { isInIframe } from "../utils/dom";
-import { VideoAdSkipper } from "../utils/videoAdSkipper";
-import { AdMuter } from "../utils/adMuter";
-import { VERIFY_SUBSCRIPTION } from "../constants/actions";
-import { ConfigureChannelBtn } from "../utils/configureBtn";
-import { BannerAdRemover } from "../utils/bannerAdRemover";
+import { isInIframe } from "../../utils/dom";
+import { VideoAdSkipper } from "./videoAdSkipper";
+import { AdMuter } from "./adMuter";
+import { VERIFY_SUBSCRIPTION } from "../../constants/actions";
+import { ConfigureChannelBtn } from "./configureBtn";
+import { BannerAdRemover } from "./bannerAdRemover";
 
 function main() {
   // Only start the script if we are at the top level. YouTube has a few iframes
