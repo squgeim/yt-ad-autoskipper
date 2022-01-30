@@ -1,104 +1,50 @@
-import { clickElem, isElementVisible } from "./dom";
-import { AD_PLAYBACK_OFFSET } from "../constants/youtube";
+import { clickElem, getElementsByClassNames } from "./dom";
+import { SKIP_AD_BTN_CLASSES } from "../constants/youtube";
 import { getTimeToSkipAdOffset } from "./config";
 import { addMilliseconds } from "./datetime";
 import { logger } from "./logger";
+import { Events, YouTubeEvents } from "./youtubeEvents";
+import { getChannelInfo } from "./youtube";
 
 export class VideoAdSkipper {
-  static instance?: VideoAdSkipper;
-  readonly #videoUrl: string;
-  readonly #button: HTMLElement;
-  #channelId?: string;
-  #timeoutId?: number;
+  #skipAt: Date | null = null;
 
-  static getInstance(
-    videoUrl: string,
-    buttonElem: HTMLElement
-  ): VideoAdSkipper {
-    if (
-      !VideoAdSkipper.instance ||
-      (VideoAdSkipper.instance &&
-        VideoAdSkipper.instance.#videoUrl !== videoUrl)
-    ) {
-      VideoAdSkipper.instance = new VideoAdSkipper(videoUrl, buttonElem);
-    }
-
-    return VideoAdSkipper.instance;
+  public setupListeners(): void {
+    YouTubeEvents.addListener(Events.adPlayStarted, () => this.scheduleClick());
+    YouTubeEvents.addListener(Events.adPlayEnded, () => this.teardown());
+    YouTubeEvents.addListener(Events.tick, () => this.tick());
+    logger.debug("listeners set up for ad skipper");
   }
 
-  constructor(videoUrl: string, buttonElem: HTMLElement) {
-    this.#videoUrl = videoUrl;
-    this.#button = buttonElem;
+  private teardown(): void {
+    this.#skipAt = null;
   }
 
-  #teardown(): void {
-    clearTimeout(this.#timeoutId);
-  }
+  private async scheduleClick(): Promise<void> {
+    const { channelId } = getChannelInfo();
+    const skipAdTime = await getTimeToSkipAdOffset(channelId);
 
-  #clickButton(): void {
-    clickElem(this.#button);
-    this.#teardown();
-    VideoAdSkipper.instance = undefined;
-  }
+    if (skipAdTime < 0) {
+      this.#skipAt = null;
+      logger.debug("not skipping ad");
 
-  set channelId(url: string) {
-    if (this.#channelId === url) {
       return;
     }
 
-    this.#channelId = url;
-
-    if (this.#timeoutId) {
-      clearTimeout(this.#timeoutId);
-      this.#timeoutId = undefined;
-
-      this.skipAd();
-    }
+    this.#skipAt = addMilliseconds(new Date(), skipAdTime * 1000);
+    logger.debug("scheduling skip at ", this.#skipAt);
   }
 
-  get channelId(): string {
-    return this.#channelId ?? "";
-  }
-
-  async skipAd(): Promise<void> {
-    if (this.#timeoutId) {
+  private tick(): void {
+    if (!this.#skipAt) {
       return;
     }
 
-    logger.debug("Channel url", this.#channelId);
-
-    // If the Skip Ad button is visible, it means that the Ad has already played
-    // for 5 seconds.
-    const adPlaybackOffset = isElementVisible(this.#button)
-      ? AD_PLAYBACK_OFFSET
-      : 0;
-
-    logger.debug("Ad playback offset", adPlaybackOffset);
-
-    const timeToSkipAdOffset =
-      (await getTimeToSkipAdOffset(this.#channelId ?? "")) * 1000;
-
-    logger.debug("Time to skip ad offset", timeToSkipAdOffset);
-
-    if (timeToSkipAdOffset < 0) {
-      // This means we are not skipping ads for this channel.
-      return;
+    if (this.#skipAt <= new Date()) {
+      const elems = getElementsByClassNames(SKIP_AD_BTN_CLASSES);
+      logger.debug("clicking on elems: ", elems);
+      elems.forEach((el) => clickElem(el));
+      this.teardown();
     }
-
-    const now = new Date();
-    const adPlaybackStart = addMilliseconds(now, -adPlaybackOffset);
-    const skipAdAt = addMilliseconds(adPlaybackStart, timeToSkipAdOffset);
-
-    if (now >= skipAdAt) {
-      logger.debug("now > skipAdAt");
-
-      return this.#clickButton();
-    }
-
-    logger.debug("skipAdAt - now =", skipAdAt.getTime() - now.getTime());
-
-    this.#timeoutId = window.setTimeout(() => {
-      this.#clickButton();
-    }, skipAdAt.getTime() - now.getTime());
   }
 }

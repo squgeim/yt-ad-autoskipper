@@ -1,10 +1,26 @@
-import { addLocationChangeEventHandler } from "./dom";
 import { getChannelInfo, isVideoPage } from "./youtube";
 import { logger } from "./logger";
 import { CONFIGURE_CHANNEL } from "../constants/actions";
+import { Events, YouTubeEvents } from "./youtubeEvents";
 
-export function injectConfigureBtn(): void {
-  function createButton() {
+export class ConfigureChannelBtn {
+  public setupListeners(): void {
+    YouTubeEvents.addListener(Events.locationChanged, (_, { location }) => {
+      logger.debug("location change: ", location);
+      this.handleLocation();
+    });
+    this.createButton();
+  }
+
+  private handleLocation() {
+    if (!isVideoPage()) {
+      return;
+    }
+
+    this.createButton();
+  }
+
+  private createButton() {
     const hasButton = document.querySelector("#yas_config_channel_btn");
 
     if (hasButton) {
@@ -41,15 +57,4 @@ export function injectConfigureBtn(): void {
     );
     subscribeBtn?.parentElement?.insertBefore(btn, subscribeBtn);
   }
-
-  createButton();
-
-  addLocationChangeEventHandler((currentLocation) => {
-    if (!isVideoPage()) {
-      return;
-    }
-
-    createButton();
-    logger.debug("location change", currentLocation);
-  });
 }

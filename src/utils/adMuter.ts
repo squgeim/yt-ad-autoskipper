@@ -1,53 +1,35 @@
 import { logger } from "./logger";
 import { getShouldMuteAd } from "./config";
-import {
-  clickMuteBtn,
-  getChannelInfo,
-  isAdPlaying,
-  isVideoMuted,
-} from "./youtube";
+import { clickMuteBtn, getChannelInfo, isVideoMuted } from "./youtube";
+import { Events, YouTubeEvents } from "./youtubeEvents";
 
-let currentState: "ad" | "video";
+export class AdMuter {
+  public setupListeners(): void {
+    YouTubeEvents.addListener(Events.adPlayStarted, () =>
+      this.handleAdPlaybackStart()
+    );
+    YouTubeEvents.addListener(Events.adPlayEnded, () => this.resetSound());
+  }
 
-export async function applyMuteAdConfig(): Promise<void> {
-  const nextState = getCurrentVideoState();
-  const stateChanged = nextState !== currentState;
-  currentState = nextState;
-
-  logger.debug("current state: ", nextState);
-
-  if (currentState === "video") {
-    if (stateChanged) {
-      logger.debug("state changed");
-      resetSound();
+  private async handleAdPlaybackStart() {
+    if (isVideoMuted()) {
+      return;
     }
 
-    return;
+    const { channelId } = getChannelInfo();
+
+    if (await getShouldMuteAd(channelId)) {
+      logger.debug("video is NOT muted. Click button.");
+      clickMuteBtn();
+    } else {
+      logger.debug("Not muting ad for this channel: ", channelId);
+    }
   }
 
-  if (isVideoMuted() || !stateChanged) {
-    logger.debug("video is muted or state did not change. Doing nothing.");
-
-    return;
+  private resetSound(): void {
+    if (isVideoMuted()) {
+      logger.debug("resetting audio.");
+      clickMuteBtn();
+    }
   }
-
-  const { channelId } = getChannelInfo();
-
-  if (await getShouldMuteAd(channelId)) {
-    logger.debug("video is NOT muted. Click button.");
-    clickMuteBtn();
-  } else {
-    logger.debug("Not muting ad for this channel: ", channelId);
-  }
-}
-
-function resetSound(): void {
-  if (isVideoMuted()) {
-    logger.debug("resetting audio.");
-    clickMuteBtn();
-  }
-}
-
-function getCurrentVideoState() {
-  return isAdPlaying() ? "ad" : "video";
 }
