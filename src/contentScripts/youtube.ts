@@ -39,7 +39,7 @@ function handlePlayerMutation() {
 }
 
 /**
- * Initializes an observer on the YouTube Video Player to get events when any
+ * Initializes an observer on the YouTube Video Player or the Youtube Music Player to get events when any
  * of its child elements change. We can check for the existence of the skip ad
  * buttons on those changes.
  */
@@ -52,6 +52,9 @@ function initSkipAdBtnObserver() {
 
   const ytdPlayer = document.querySelector<HTMLElement>(
     "ytd-player#ytd-player"
+  ) ||
+  document.querySelector<HTMLElement>(
+    "ytmusic-player#player"
   );
 
   if (!ytdPlayer) {
