@@ -2,13 +2,16 @@ import copy from "rollup-plugin-copy";
 import typescript from "@rollup/plugin-typescript";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import replace from "rollup-plugin-replace";
+import replace from "@rollup/plugin-replace";
 
 const commonPlugins = [
   nodeResolve(),
   replace({
-    "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-    "process.env.DEBUG": JSON.stringify(process.env.DEBUG),
+    values: {
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "process.env.DEBUG": JSON.stringify(process.env.DEBUG),
+    },
+    preventAssignment: true
   }),
   commonjs(),
   typescript(),
@@ -40,7 +43,7 @@ export default [
     plugins: [...commonPlugins],
   },
   {
-    input: "src/settings/index.tsx",
+    input: "src/settings/settings.ts",
     output: {
       file: "build/pages/settings.js",
       format: "esm",
