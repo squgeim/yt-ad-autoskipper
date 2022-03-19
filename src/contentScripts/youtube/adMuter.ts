@@ -6,8 +6,9 @@ import {
   isVideoMuted,
 } from "../../utils/youtubeDOM";
 import { Events, YouTubeEvents } from "../../utils/youtubeEvents";
+import {EventHandler} from "../../utils/types";
 
-export class AdMuter {
+export class AdMuter implements EventHandler {
   public setupListeners(): void {
     YouTubeEvents.addListener(Events.adPlayStarted, () =>
       this.handleAdPlaybackStart()

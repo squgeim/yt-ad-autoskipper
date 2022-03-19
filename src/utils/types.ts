@@ -12,3 +12,7 @@ export type Subscription = {
   user: AuthUser;
   nextSyncAt: number;
 };
+
+export interface EventHandler {
+  setupListeners: () => void;
+}
