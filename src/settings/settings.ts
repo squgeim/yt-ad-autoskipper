@@ -14,53 +14,7 @@ type State = {
   pageProps: Record<string, unknown>;
 };
 
-class AdsSettings extends HTMLElement {
-  static elementName = "ads-settings";
-
-  _state: State = {
-    user: null,
-    page: "pref",
-    pageProps: {},
-  };
-
-  constructor() {
-    super();
-
-    this.attachShadow({ mode: "open" });
-  }
-
-  connectedCallback() {
-    this.attachListenerForPageChange();
-
-    Promise.all([
-      this.getUserFromStorage(),
-      this.getPageFromStorage()
-    ]).then(([user, { page, pageProps }]) => {
-      this.state = {
-        user,
-        page,
-        pageProps,
-      };
-    });
-  }
-
-  get state(): State {
-    return this._state;
-  }
-
-  set state(newState: Partial<State>) {
-    this._state = deepmerge<State>(
-      this._state,
-      newState
-    );
-    this.render();
-  };
-
-  render = () => {
-    if (!this.shadowRoot) return;
-
-    const style = document.createElement("style");
-    style.textContent = `
+const css = `
 a:link,
 a:visited {
   color: inherit;
@@ -111,37 +65,16 @@ h2.title {
   font-size: 0.9em;
   text-align: center;
 }
-    `;
+`;
 
-    const container = document.createElement("div");
-    container.className = "container";
-    container.innerHTML = `
-      <h1>Youtube Ad Auto-skipper</h1>
-    `;
-
-    this.shadowRoot.innerHTML = "";
-    this.shadowRoot.append(style, container);
-
-    if (this.state.page === "channel" && this.state.user) {
-      const { channelId, channelName, imageUrl } = this.state.pageProps;
-
-      const page = document.createElement(AdsChannelPref.elementName);
-      page.setAttribute("channel-id", channelId as string);
-      page.setAttribute("channel-name", channelName as string);
-      page.setAttribute("image-url", imageUrl as string);
-
-      container.append(page);
-
-      return;
-    }
-
-    const license = document.createElement(AdsLicense.elementName);
-    license.setAttribute("user", this.state.user?.displayName || "");
-    container.append(license);
-
-    const globalPref = document.createElement("div");
-    globalPref.className = !this.state.user ? "pref-disabled" : "";
-    globalPref.innerHTML = `
+const template = `
+<div class="container">
+  <h1>Youtube Ad Auto-skipper</h1>
+  <slot name="config">
+    <slot name="license">
+      <${AdsLicense.elementName} />
+    </slot>
+    <div class="can-disable">
       <h2 class="title">
         Global Preferences
         <p class="pref-desc">
@@ -149,15 +82,9 @@ h2.title {
           specific configuration for a YouTube channel defined below.
         </p>
       </h2>
-    `;
-    const channelPrefForm = document.createElement(AdsChannelPrefForm.elementName);
-    !this.state.user && channelPrefForm.setAttribute("is-disabled", "true");
-    globalPref.append(channelPrefForm);
-    container.append(globalPref);
-
-    const channelPref = document.createElement("div");
-    channelPref.className = !this.state.user ? "pref-disabled" : "";
-    channelPref.innerHTML = `
+      <${AdsChannelPrefForm.elementName} />
+    </div>
+    <div class="can-disable">
       <h2 class="title">
         Channel Preferences
         <p class="pref-desc">
@@ -165,20 +92,107 @@ h2.title {
           by your favourite YouTubers.
         </p>
       </h2>
-    `;
-    channelPref.append(document.createElement(AdsChannelList.elementName));
-    container.append(channelPref);
+      <${AdsChannelList.elementName} />
+    </div>
+    <slot name="license-footer">
+      <div class="license-footer">
+        <p>
+          You support the development of this extension with an annual payment.
+          <br>
+          <a href="${API.CANCEL}">Click here to cancel future payments.</a>
+        </p>
+      </div>
+    </slot>
+  </slot>
+</div>`;
 
-    if (this.state.user) {
-      container.innerHTML += `
-        <div class="license-footer">
-          <p>
-            You support the development of this extension with an annual payment.
-            <br />
-            <a href=${API.CANCEL}>Click here to cancel future payments.</a>
-          </p>
-        </div>
-      `;
+
+
+class AdsSettings extends HTMLElement {
+  static elementName = "ads-settings";
+
+  _state: State = {
+    user: null,
+    page: "pref",
+    pageProps: {},
+  };
+
+  constructor() {
+    super();
+
+    const style = document.createElement("style");
+    style.textContent = css;
+    const body = document.createElement("template");
+    body.innerHTML = template;
+
+    const root = this.attachShadow({ mode: "open" });
+    root.append(style, body.content);
+  }
+
+  connectedCallback() {
+    this.attachListenerForPageChange();
+
+    Promise.all([
+      this.getUserFromStorage(),
+      this.getPageFromStorage()
+    ]).then(([user, { page, pageProps }]) => {
+      this.state = {
+        user,
+        page,
+        pageProps,
+      };
+    });
+  }
+
+  get state(): State {
+    return this._state;
+  }
+
+  set state(newState: Partial<State>) {
+    this._state = deepmerge<State>(
+      this._state,
+      newState
+    );
+    this.render();
+  };
+
+  render = () => {
+    const user = this.state.user;
+
+    this.innerHTML = "";
+
+    if (this.state.page === "channel" && user) {
+      const { channelId, channelName, imageUrl } = this.state.pageProps;
+
+      const slot = document.createElement("slot");
+      slot.slot = "config";
+
+      const channelConfig = document.createElement(AdsChannelPref.elementName);
+      channelConfig.setAttribute("channel-id", channelId as string);
+      channelConfig.setAttribute("channel-name", channelName as string);
+      channelConfig.setAttribute("image-url", imageUrl as string);
+
+      slot.append(channelConfig);
+
+      this.append(slot);
+
+      return;
+    }
+
+    if (user) {
+      const license = document.createElement(AdsLicense.elementName);
+      license.slot = "license";
+      license.setAttribute("user", user?.displayName);
+      this.append(license);
+    }
+
+    if (!user) {
+      Array.from(this.shadowRoot?.querySelectorAll(".can-disable") || []).forEach((elem) => {
+        elem.className = "pref-disabled";
+      });
+      const slot = document.createElement("slot");
+      slot.slot = "license-footer";
+      this.append(slot);
     }
   }
 

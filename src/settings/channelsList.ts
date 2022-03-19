@@ -2,60 +2,7 @@ import deepmerge from "deepmerge";
 import {CONFIGURE_CHANNEL} from "../constants/actions";
 import {ChannelConfig, getConfig, removeChannel} from "../utils/config";
 
-type State = {
-  channels: ChannelConfig[],
-};
-
-export class AdsChannelList extends HTMLElement {
-  static elementName = "ads-channel-list";
-
-  _state: State = {
-    channels: [],
-  };
-
-  get state() {
-    return this._state;
-  }
-
-  set state(newState: Partial<State>) {
-    this._state = deepmerge(this._state, newState);
-    this.render();
-  }
-
-  constructor() {
-    super();
-
-    this.attachShadow({ mode: "open" });
-  }
-
-  connectedCallback() {
-    const syncChannels = () => {
-      getConfig().then((config) => {
-        this._state = {
-          channels: Object.values(config.channelConfigs).sort((a, b) =>
-            a.channelName.localeCompare(b.channelName)
-          )
-        };
-        this.render();
-      });
-    };
-
-    syncChannels();
-
-    chrome.storage.onChanged.addListener((changes: Record<string, unknown>) => {
-      if ("config" in changes) {
-        syncChannels();
-      }
-    });
-  }
-
-  render = () => {
-    if (!this.shadowRoot) return;
-
-    this.shadowRoot.innerHTML = '';
-
-    const style = document.createElement("style");
-    style.textContent = `
+const CSS = `
 .pref-box {
   margin-bottom: 1em;
   border-radius: 1em;
@@ -110,31 +57,89 @@ export class AdsChannelList extends HTMLElement {
   flex: 1;
   color: inherit;
   text-decoration: none;
-}
-    `;
+}`;
 
-    this.shadowRoot.append(style);
+const TEMPLATE = `
+<ul class="pref-box"></ul>
+<slot name="empty-list">
+  <div class="pref-box empty-channel-list">
+    <p>You have not configured any channels yet!</p>
+    <p>
+      Find Ad Skipper besides the Subscribe button when watching a YouTube
+      video. Click on it to configure the extension for that channel.
+    </p>
+    <img
+      src="./preview.png"
+      alt="Pointing out Ad Skipper button besides Subscribe button in YouTube."
+    />
+  </div>
+</slot>
+`;
+
+type State = {
+  channels: ChannelConfig[],
+};
+
+export class AdsChannelList extends HTMLElement {
+  static elementName = "ads-channel-list";
+
+  _state: State = {
+    channels: [],
+  };
+
+  get state() {
+    return this._state;
+  }
+
+  set state(newState: Partial<State>) {
+    this._state = deepmerge(this._state, newState);
+    this.render();
+  }
+
+  constructor() {
+    super();
+
+    const style = document.createElement("style");
+    style.textContent = CSS;
+    const body = document.createElement("template");
+    body.innerHTML = TEMPLATE;
+
+    const root = this.attachShadow({ mode: "open" });
+    root.append(style, body.content);
+  }
+
+  connectedCallback() {
+    const syncChannels = () => {
+      getConfig().then((config) => {
+        this._state = {
+          channels: Object.values(config.channelConfigs).sort((a, b) =>
+            a.channelName.localeCompare(b.channelName)
+          )
+        };
+        this.render();
+      });
+    };
+
+    syncChannels();
+
+    chrome.storage.onChanged.addListener((changes: Record<string, unknown>) => {
+      if ("config" in changes) {
+        syncChannels();
+      }
+    });
+  }
+
+  render = () => {
+    if (!this.shadowRoot) return;
+
+    this.innerHTML = '';
 
     if (!this.state.channels?.length) {
-      this.shadowRoot.innerHTML += `
-        <div class="pref-box empty-channel-list">
-          <p>You have not configured any channels yet!</p>
-          <p>
-            Find Ad Skipper besides the Subscribe button when watching a YouTube
-            video. Click on it to configure the extension for that channel.
-          </p>
-          <img
-            src="./preview.png"
-            alt="Pointing out Ad Skipper button besides Subscribe button in YouTube."
-          />
-        </div>
-      `;
-
       return;
     }
 
-    const ul = document.createElement("ul");
-    ul.className = "pref-box";
+    const ul = this.shadowRoot.querySelector("ul.pref-box");
+    ul && (ul.innerHTML = "");
 
     for (const channel of this.state.channels) {
       const li = document.createElement("li");
@@ -161,10 +166,10 @@ export class AdsChannelList extends HTMLElement {
         removeChannel(channel.channelId);
       };
       li.append(btn);
-      ul.append(li);
+      ul?.append(li);
     }
 
-    this.shadowRoot.append(ul);
+    this.innerHTML = `<slot slot="empty-list"></slot>`;
   };
 }
 

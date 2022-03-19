@@ -2,6 +2,84 @@ import deepmerge from "deepmerge";
 import {createChannel, DEFAULT_CONFIG, getChannelConfig, getShouldMuteAd, getTimeToSkipAdOffset, setShouldMuteAd, setTimeToSkipAdOffset} from "../utils/config";
 import {logger} from "../utils/logger";
 
+const CSS = `
+.pref-box {
+  margin-bottom: 1em;
+  border-radius: 1em;
+  background-color: var(--pref-box-bg);
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pref-box .pref-row {
+  padding: 1em 1.5em;
+  border-bottom: 1px solid var(--bg-color);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  gap: 1em;
+}
+
+.pref-box .pref-row:last-child {
+  border-bottom: none;
+}
+
+.pref-box .pref-row input {
+  width: 2.5em;
+  text-align: right;
+}
+
+.pref-box .pref-row input[type="checkbox"] {
+  height: 1.5em;
+}
+
+.pref-box .pref-row .label {
+  flex: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pref-desc {
+  margin: 0;
+  margin-top: 0.5em;
+  font-size: 0.8em;
+  opacity: 0.5;
+  text-transform: none;
+}`;
+
+const TEMPLATE = `
+<form>
+  <fieldset class="pref-box">
+    <label class="pref-row">
+      <div class="label">
+        <span>Mute Ads</span>
+        <p class="pref-desc">Ads will be muted when they start playing.</p>
+      </div>
+      <input type="checkbox" name="mutead" />
+    </label>
+    <label class="pref-row">
+      <div class="label">
+        <span>Seconds to play ad before skipping</span>
+        <p class="pref-desc">
+          Ads will play for the supplied number of seconds before they are
+          skiped. The default value is 5 seconds as that is when YouTube
+          makes the "Skip Ad" button visible, but the value can be as low as
+          0, where you won't see any ads.
+        </p>
+        <p class="pref-desc">
+          You can let ads play longer for you favorite YouTubers and skip
+          them quickly for other videos.
+        </p>
+      </div>
+      <input type="number" name="skipsecs" />
+    </label>
+  </fieldset>
+</form>`;
+
 type State = {
   isMute: boolean,
   skipSecs: number,
@@ -26,7 +104,14 @@ export class AdsChannelPrefForm extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+
+    const style = document.createElement("style");
+    style.textContent = CSS;
+    const body = document.createElement("template");
+    body.innerHTML = TEMPLATE;
+
+    const root = this.attachShadow({ mode: "open" });
+    root.append(style, body.content);
   }
 
   connectedCallback() {
@@ -75,105 +160,19 @@ export class AdsChannelPrefForm extends HTMLElement {
   render = () => {
     if (!this.shadowRoot) return;
 
-    const style = document.createElement("style");
-    style.textContent = `
-.pref-box {
-  margin-bottom: 1em;
-  border-radius: 1em;
-  background-color: var(--pref-box-bg);
-  border: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+    const toggleMuteInput = this.shadowRoot.querySelector<HTMLInputElement>("input[name=mutead]");
+    if (toggleMuteInput) {
+      toggleMuteInput.onchange = this.toggleIsMute;
+      this.props.isDisabled && toggleMuteInput.setAttribute("disabled", "");
+      this.state.isMute && toggleMuteInput.setAttribute("checked", "");
+    }
 
-.pref-box .pref-row {
-  padding: 1em 1.5em;
-  border-bottom: 1px solid var(--bg-color);
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  box-sizing: border-box;
-  gap: 1em;
-}
-
-.pref-box .pref-row:last-child {
-  border-bottom: none;
-}
-
-.pref-box .pref-row input {
-  width: 2.5em;
-  text-align: right;
-}
-
-.pref-box .pref-row input[type="checkbox"] {
-  height: 1.5em;
-}
-
-.pref-box .pref-row .label {
-  flex: 1;
-  color: inherit;
-  text-decoration: none;
-}
-
-.pref-desc {
-  margin: 0;
-  margin-top: 0.5em;
-  font-size: 0.8em;
-  opacity: 0.5;
-  text-transform: none;
-}
-    `;
-
-    const muteAdsRow = document.createElement("label");
-    muteAdsRow.className = "pref-row";
-    muteAdsRow.innerHTML = `
-      <div class="label">
-        <span>Mute Ads</span>
-        <p class="pref-desc">Ads will be muted when they start playing.</p>
-      </div>
-    `;
-    const toggleMuteInput = document.createElement("input");
-    toggleMuteInput.type = "checkbox";
-    toggleMuteInput.onchange = this.toggleIsMute;
-    this.props.isDisabled && toggleMuteInput.setAttribute("disabled", "");
-    this.state.isMute && toggleMuteInput.setAttribute("checked", "");
-    muteAdsRow.append(toggleMuteInput);
-
-    const skipSecsRow = document.createElement("label");
-    skipSecsRow.className = "pref-row";
-    skipSecsRow.innerHTML = `
-      <div class="label">
-        <span>Seconds to play ad before skipping</span>
-        <p class="pref-desc">
-          Ads will play for the supplied number of seconds before they are
-          skiped. The default value is 5 seconds as that is when YouTube
-          makes the "Skip Ad" button visible, but the value can be as low as
-          0, where you won't see any ads.
-        </p>
-        <p class="pref-desc">
-          You can let ads play longer for you favorite YouTubers and skip
-          them quickly for other videos.
-        </p>
-      </div>
-    `;
-    const skipSecsInput = document.createElement("input");
-    skipSecsInput.type = "number";
-    skipSecsInput.value = "" + this.state.skipSecs;
-    skipSecsInput.onchange = this.updateSkipSecs;
-    this.props.isDisabled && skipSecsInput.setAttribute("disabled", "");
-    skipSecsRow.append(skipSecsInput);
-
-    const fieldset = document.createElement("fieldset");
-    fieldset.className = "pref-box";
-    fieldset.append(muteAdsRow, skipSecsRow);
-
-    const form = document.createElement("form");
-    form.append(fieldset);
-
-    this.shadowRoot.innerHTML = "";
-    this.shadowRoot.append(style, form);
+    const skipSecsInput = this.shadowRoot.querySelector<HTMLInputElement>("input[name=skipsecs]");
+    if (skipSecsInput) {
+      skipSecsInput.setAttribute("value", "" + this.state.skipSecs);
+      skipSecsInput.onchange = this.updateSkipSecs;
+      this.props.isDisabled && skipSecsInput.setAttribute("disabled", "");
+    }
   }
 
   createChannelIfRequired = async () => {
