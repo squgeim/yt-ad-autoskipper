@@ -1,12 +1,12 @@
-import deepmerge from "deepmerge";
-import {AdsChannelList} from "./channelsList";
-import {API} from "../constants/api";
-import {getSubscription} from "../utils/config";
-import {logger} from "../utils/logger";
-import {AuthUser} from "../utils/types";
-import {AdsChannelPref} from "./channelPref";
-import {AdsChannelPrefForm} from "./channelPrefForm";
-import {AdsLicense} from "./license";
+import { AdsChannelList } from "./channelsList";
+import { API } from "../constants/api";
+import { getSubscription } from "../utils/config";
+import { logger } from "../utils/logger";
+import { AuthUser } from "../utils/types";
+import { AdsChannelPref } from "./channelPref";
+import { AdsChannelPrefForm } from "./channelPrefForm";
+import { AdsLicense } from "./license";
+import { deepmerge } from "../utils/helpers";
 
 type State = {
   user: AuthUser | null;
@@ -106,8 +106,6 @@ const template = `
   </slot>
 </div>`;
 
-
-
 class AdsSettings extends HTMLElement {
   static elementName = "ads-settings";
 
@@ -132,16 +130,15 @@ class AdsSettings extends HTMLElement {
   connectedCallback() {
     this.attachListenerForPageChange();
 
-    Promise.all([
-      this.getUserFromStorage(),
-      this.getPageFromStorage()
-    ]).then(([user, { page, pageProps }]) => {
-      this.state = {
-        user,
-        page,
-        pageProps,
-      };
-    });
+    Promise.all([this.getUserFromStorage(), this.getPageFromStorage()]).then(
+      ([user, { page, pageProps }]) => {
+        this.state = {
+          user,
+          page,
+          pageProps,
+        };
+      }
+    );
   }
 
   get state(): State {
@@ -149,12 +146,9 @@ class AdsSettings extends HTMLElement {
   }
 
   set state(newState: Partial<State>) {
-    this._state = deepmerge<State>(
-      this._state,
-      newState
-    );
+    this._state = deepmerge<State>(this._state, newState);
     this.render();
-  };
+  }
 
   render = () => {
     const user = this.state.user;
@@ -187,14 +181,16 @@ class AdsSettings extends HTMLElement {
     }
 
     if (!user) {
-      Array.from(this.shadowRoot?.querySelectorAll(".can-disable") || []).forEach((elem) => {
+      Array.from(
+        this.shadowRoot?.querySelectorAll(".can-disable") || []
+      ).forEach((elem) => {
         elem.className = "pref-disabled";
       });
       const slot = document.createElement("slot");
       slot.slot = "license-footer";
       this.append(slot);
     }
-  }
+  };
 
   getUserFromStorage = async () => {
     const subscription = await getSubscription();
@@ -238,7 +234,7 @@ class AdsSettings extends HTMLElement {
     };
 
     chrome.storage.onChanged.addListener(handleMessage);
-  }
+  };
 }
 
 customElements.define(AdsSettings.elementName, AdsSettings);

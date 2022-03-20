@@ -6,7 +6,7 @@ import {
   isVideoMuted,
 } from "../../utils/youtubeDOM";
 import { Events, YouTubeEvents } from "../../utils/youtubeEvents";
-import {EventHandler} from "../../utils/types";
+import { EventHandler } from "../../utils/types";
 
 export class AdMuter implements EventHandler {
   public setupListeners(): void {

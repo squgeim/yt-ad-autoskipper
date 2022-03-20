@@ -1,5 +1,5 @@
-import {GO_PREF_HOME} from "../constants/actions";
-import {AdsChannelPrefForm} from "./channelPrefForm";
+import { GO_PREF_HOME } from "../constants/actions";
+import { AdsChannelPrefForm } from "./channelPrefForm";
 
 const CSS = `
 .channel-pref-header {
@@ -65,11 +65,7 @@ export class AdsChannelPref extends HTMLElement {
   render = () => {
     if (!this.shadowRoot) return;
 
-    const [
-      channelId,
-      channelName,
-      imageUrl
-    ] = [
+    const [channelId, channelName, imageUrl] = [
       this.getAttribute("channel-id") ?? "",
       this.getAttribute("channel-name") ?? "",
       this.getAttribute("image-url") ?? "",
@@ -91,7 +87,7 @@ export class AdsChannelPref extends HTMLElement {
         image-url="${imageUrl}"
       />
     `;
-  }
+  };
 }
 
 customElements.define(AdsChannelPref.elementName, AdsChannelPref);

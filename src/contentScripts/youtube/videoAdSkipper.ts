@@ -3,7 +3,7 @@ import { addMilliseconds } from "../../utils/datetime";
 import { logger } from "../../utils/logger";
 import { Events, YouTubeEvents } from "../../utils/youtubeEvents";
 import { clickSkipAdBtn, getChannelInfo } from "../../utils/youtubeDOM";
-import {EventHandler} from "../../utils/types";
+import { EventHandler } from "../../utils/types";
 
 export class VideoAdSkipper implements EventHandler {
   #skipAt: Date | null = null;

@@ -1,6 +1,14 @@
-import deepmerge from "deepmerge";
-import {createChannel, DEFAULT_CONFIG, getChannelConfig, getShouldMuteAd, getTimeToSkipAdOffset, setShouldMuteAd, setTimeToSkipAdOffset} from "../utils/config";
-import {logger} from "../utils/logger";
+import {
+  createChannel,
+  DEFAULT_CONFIG,
+  getChannelConfig,
+  getShouldMuteAd,
+  getTimeToSkipAdOffset,
+  setShouldMuteAd,
+  setTimeToSkipAdOffset,
+} from "../utils/config";
+import { deepmerge } from "../utils/helpers";
+import { logger } from "../utils/logger";
 
 const CSS = `
 .pref-box {
@@ -81,8 +89,8 @@ const TEMPLATE = `
 </form>`;
 
 type State = {
-  isMute: boolean,
-  skipSecs: number,
+  isMute: boolean;
+  skipSecs: number;
 };
 
 export class AdsChannelPrefForm extends HTMLElement {
@@ -98,7 +106,7 @@ export class AdsChannelPrefForm extends HTMLElement {
     channelName: "",
     imageUrl: "",
     isDisabled: false,
-  }
+  };
 
   shouldCreateChannel = false;
 
@@ -149,10 +157,7 @@ export class AdsChannelPrefForm extends HTMLElement {
   }
 
   set state(newState: Partial<State>) {
-    this._state = deepmerge(
-      this._state,
-      newState
-    );
+    this._state = deepmerge(this._state, newState);
 
     this.render();
   }
@@ -160,20 +165,23 @@ export class AdsChannelPrefForm extends HTMLElement {
   render = () => {
     if (!this.shadowRoot) return;
 
-    const toggleMuteInput = this.shadowRoot.querySelector<HTMLInputElement>("input[name=mutead]");
+    const toggleMuteInput =
+      this.shadowRoot.querySelector<HTMLInputElement>("input[name=mutead]");
     if (toggleMuteInput) {
       toggleMuteInput.onchange = this.toggleIsMute;
       this.props.isDisabled && toggleMuteInput.setAttribute("disabled", "");
       this.state.isMute && toggleMuteInput.setAttribute("checked", "");
     }
 
-    const skipSecsInput = this.shadowRoot.querySelector<HTMLInputElement>("input[name=skipsecs]");
+    const skipSecsInput = this.shadowRoot.querySelector<HTMLInputElement>(
+      "input[name=skipsecs]"
+    );
     if (skipSecsInput) {
       skipSecsInput.setAttribute("value", "" + this.state.skipSecs);
       skipSecsInput.onchange = this.updateSkipSecs;
       this.props.isDisabled && skipSecsInput.setAttribute("disabled", "");
     }
-  }
+  };
 
   createChannelIfRequired = async () => {
     if (
@@ -188,7 +196,7 @@ export class AdsChannelPrefForm extends HTMLElement {
         this.props.imageUrl
       );
     }
-  }
+  };
 
   updateSkipSecs = (e: Event) => {
     const input = e.target as HTMLInputElement;
@@ -205,27 +213,27 @@ export class AdsChannelPrefForm extends HTMLElement {
     this.createChannelIfRequired()
       .then(() => setTimeToSkipAdOffset(this.props.channelId || "global", val))
       .catch(() => {
-        getTimeToSkipAdOffset()
-          .then((newVal) => {
-            this.state = {
-              skipSecs: newVal,
-            };
-          })
+        getTimeToSkipAdOffset().then((newVal) => {
+          this.state = {
+            skipSecs: newVal,
+          };
+        });
       });
-  }
+  };
 
   toggleIsMute = () => {
     this.createChannelIfRequired()
-      .then(() => setShouldMuteAd(this.props.channelId || "global", !this.state.isMute))
+      .then(() =>
+        setShouldMuteAd(this.props.channelId || "global", !this.state.isMute)
+      )
       .catch(() => {
-        getShouldMuteAd()
-          .then((newVal) => {
-            this.state = {
-              isMute: newVal,
-            };
-          })
+        getShouldMuteAd().then((newVal) => {
+          this.state = {
+            isMute: newVal,
+          };
+        });
       });
-  }
+  };
 }
 
 customElements.define(AdsChannelPrefForm.elementName, AdsChannelPrefForm);

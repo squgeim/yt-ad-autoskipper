@@ -1,5 +1,5 @@
 import { getElementsByClassNames, clickElem } from "../../utils/dom";
-import {EventHandler} from "../../utils/types";
+import { EventHandler } from "../../utils/types";
 import { Events, YouTubeEvents } from "../../utils/youtubeEvents";
 
 export class BannerAdRemover implements EventHandler {

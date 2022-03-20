@@ -1,6 +1,6 @@
 import { CONFIGURE_CHANNEL } from "../../constants/actions";
 import { logger } from "../../utils/logger";
-import {EventHandler} from "../../utils/types";
+import { EventHandler } from "../../utils/types";
 import { isVideoPage, getChannelInfo } from "../../utils/youtubeDOM";
 import { YouTubeEvents, Events } from "../../utils/youtubeEvents";
 

@@ -1,4 +1,4 @@
-import merge from "deepmerge";
+import { deepmerge } from "./helpers";
 import { logger } from "./logger";
 
 import { Subscription } from "./types";
@@ -75,7 +75,10 @@ async function mergeChannelConfig(
   if (scope === "global") {
     const newConfig: ConfigObj = {
       ...currentConfig,
-      globalConfig: merge<ChannelConfig>(currentConfig.globalConfig, addition),
+      globalConfig: deepmerge<ChannelConfig>(
+        currentConfig.globalConfig,
+        addition
+      ),
     };
 
     await setConfig(newConfig);
@@ -93,7 +96,7 @@ async function mergeChannelConfig(
     ...currentConfig,
     channelConfigs: {
       ...currentConfig.channelConfigs,
-      [scope]: merge<ChannelConfig>(
+      [scope]: deepmerge<ChannelConfig>(
         currentConfig.channelConfigs[scope],
         addition
       ),

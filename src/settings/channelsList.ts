@@ -1,6 +1,6 @@
-import deepmerge from "deepmerge";
-import {CONFIGURE_CHANNEL} from "../constants/actions";
-import {ChannelConfig, getConfig, removeChannel} from "../utils/config";
+import { CONFIGURE_CHANNEL } from "../constants/actions";
+import { ChannelConfig, getConfig, removeChannel } from "../utils/config";
+import { deepmerge } from "../utils/helpers";
 
 const CSS = `
 .pref-box {
@@ -77,7 +77,7 @@ const TEMPLATE = `
 `;
 
 type State = {
-  channels: ChannelConfig[],
+  channels: ChannelConfig[];
 };
 
 export class AdsChannelList extends HTMLElement {
@@ -114,7 +114,7 @@ export class AdsChannelList extends HTMLElement {
         this._state = {
           channels: Object.values(config.channelConfigs).sort((a, b) =>
             a.channelName.localeCompare(b.channelName)
-          )
+          ),
         };
         this.render();
       });
@@ -132,7 +132,7 @@ export class AdsChannelList extends HTMLElement {
   render = () => {
     if (!this.shadowRoot) return;
 
-    this.innerHTML = '';
+    this.innerHTML = "";
 
     if (!this.state.channels?.length) {
       return;
