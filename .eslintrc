@@ -1,12 +1,10 @@
 {
   "plugins": [
     "@typescript-eslint",
-    "prettier"
   ],
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "prettier"
   ],
   "parserOptions": {
     "ecmaVersion": 2020,
@@ -16,5 +14,8 @@
     "es6": true,
     "browser": true,
     "node": true
+  },
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": [0]
   }
 }

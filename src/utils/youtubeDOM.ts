@@ -1,9 +1,5 @@
 import { logger } from "./logger";
-import { clickElem } from "./dom";
-
-export function isAdPlaying(): boolean {
-  return !!document.querySelector(".html5-video-player.ad-showing");
-}
+import { clickElem, getElementsByClassNames } from "./dom";
 
 export function isVideoMuted(): boolean {
   const volumeSlider = document.querySelector<HTMLElement>(
@@ -11,6 +7,15 @@ export function isVideoMuted(): boolean {
   );
 
   return parseInt(volumeSlider?.style.left || "0") === 0;
+}
+
+export function clickSkipAdBtn(): void {
+  const elems = getElementsByClassNames([
+    "videoAdUiSkipButton", // Old close ad button
+    "ytp-ad-skip-button ytp-button", // New close ad button
+  ]);
+  logger.debug("clicking on elems: ", elems);
+  elems.forEach((el) => clickElem(el));
 }
 
 export function clickMuteBtn(): void {

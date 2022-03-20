@@ -14,15 +14,6 @@ export function isInIframe(): boolean {
 }
 
 /**
- * We check if the button is visible by using the `offsetParent` attribute
- * on an element. It is `null` if the element, or any of its parents, is set
- * to have style `display:none`.
- */
-export function isElementVisible(elem: HTMLElement): boolean {
-  return elem.offsetParent !== null;
-}
-
-/**
  * Triggers a click event on the given DOM element.
  *
  * This function is based on an answer here:
@@ -42,31 +33,3 @@ export function getElementsByClassNames(classNames: string[]): HTMLElement[] {
     .reduce((acc, elems) => acc.concat(elems), [])
     .map((elem) => elem as HTMLElement);
 }
-
-type LocationCb = (l: string) => void;
-export const addLocationChangeEventHandler = (() => {
-  let lastLocation = document.location.href;
-  const callbacks = new Set<LocationCb>();
-
-  const checkLocation = () => {
-    const currentLocation = document.location.href;
-    if (lastLocation !== currentLocation) {
-      for (const cb of callbacks) {
-        cb.apply(undefined, [currentLocation]);
-      }
-      lastLocation = currentLocation;
-    }
-
-    setTimeout(checkLocation, 1000);
-  };
-
-  checkLocation();
-
-  return (cb: LocationCb) => {
-    callbacks.add(cb);
-
-    return () => {
-      callbacks.delete(cb);
-    };
-  };
-})();

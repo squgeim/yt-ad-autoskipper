@@ -1,7 +1,6 @@
-import merge from "deepmerge";
+import { deepmerge } from "./helpers";
 import { logger } from "./logger";
 
-import { AD_PLAYBACK_OFFSET } from "../constants/youtube";
 import { Subscription } from "./types";
 
 type TimeToSkipConfig = {
@@ -27,6 +26,8 @@ export type ConfigObj = {
 
 type Scope = "global" | string;
 
+// Seconds after with Skip Ad button is activated by default.
+const AD_PLAYBACK_OFFSET = 5;
 export const DEFAULT_CONFIG: ConfigObj = Object.freeze({
   globalConfig: {
     timeToSkip: AD_PLAYBACK_OFFSET,
@@ -74,7 +75,10 @@ async function mergeChannelConfig(
   if (scope === "global") {
     const newConfig: ConfigObj = {
       ...currentConfig,
-      globalConfig: merge<ChannelConfig>(currentConfig.globalConfig, addition),
+      globalConfig: deepmerge<ChannelConfig>(
+        currentConfig.globalConfig,
+        addition
+      ),
     };
 
     await setConfig(newConfig);
@@ -92,7 +96,7 @@ async function mergeChannelConfig(
     ...currentConfig,
     channelConfigs: {
       ...currentConfig.channelConfigs,
-      [scope]: merge<ChannelConfig>(
+      [scope]: deepmerge<ChannelConfig>(
         currentConfig.channelConfigs[scope],
         addition
       ),
