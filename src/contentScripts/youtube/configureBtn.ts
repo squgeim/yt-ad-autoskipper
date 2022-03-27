@@ -28,6 +28,11 @@ export class ConfigureChannelBtn implements EventHandler {
       return;
     }
 
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.marginRight = "3px";
+
     const btn = document.createElement("button");
     btn.id = "yas_config_channel_btn";
     btn.title = "Configure ad skipping for this channel";
@@ -35,8 +40,9 @@ export class ConfigureChannelBtn implements EventHandler {
       <img height="100%" src="https://github.com/squgeim/yt-ad-autoskipper/raw/master/src/dist/logo.png" alt="" />
     `;
     btn.style.height = "36px";
-    btn.style.marginTop = "6px";
-    btn.style.marginBottom = "6px";
+    btn.style.backgroundColor = "white";
+    btn.style.border = "1px solid steelblue";
+    btn.style.borderRadius = "2px";
     btn.style.cursor = "pointer";
 
     btn.onclick = () => {
@@ -53,9 +59,11 @@ export class ConfigureChannelBtn implements EventHandler {
       });
     };
 
-    const subscribeBtn = document.querySelector(
-      "ytd-video-secondary-info-renderer #subscribe-button"
+    div.append(btn);
+
+    const uploadInfo = document.querySelector(
+      "ytd-video-secondary-info-renderer #upload-info"
     );
-    subscribeBtn?.parentElement?.insertBefore(btn, subscribeBtn);
+    uploadInfo?.insertAdjacentElement("afterend", div);
   }
 }
