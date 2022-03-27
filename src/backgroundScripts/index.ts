@@ -61,7 +61,8 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "update") {
     chrome.storage.local.get(["subscription"]).then(({ subscription }) => {
       if (!subscription) {
-        chrome.runtime.openOptionsPage();
+        // Not showing options on update for this update.
+        // chrome.runtime.openOptionsPage();
       }
     });
   }
