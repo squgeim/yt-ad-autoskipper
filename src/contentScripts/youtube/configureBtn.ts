@@ -5,10 +5,19 @@ import { isVideoPage, getChannelInfo } from "../../utils/youtubeDOM";
 import { YouTubeEvents, Events } from "../../utils/youtubeEvents";
 
 export class ConfigureChannelBtn implements EventHandler {
+  tryAgain = false;
+
   public setupListeners(): void {
     YouTubeEvents.addListener(Events.locationChanged, (_, { location }) => {
       logger.debug("location change: ", location);
       this.handleLocation();
+    });
+    YouTubeEvents.addListener(Events.tick, () => {
+      if (this.tryAgain) {
+        logger.debug("trying to create config button again.");
+        this.tryAgain = false;
+        this.createButton();
+      }
     });
     this.createButton();
   }
@@ -25,6 +34,17 @@ export class ConfigureChannelBtn implements EventHandler {
     const hasButton = document.querySelector("#yas_config_channel_btn");
 
     if (hasButton) {
+      return;
+    }
+
+    const uploadInfo = document.querySelector(
+      "ytd-video-secondary-info-renderer #upload-info"
+    );
+
+    if (!uploadInfo) {
+      logger.debug("Could not palce config button. Will try again next tick.");
+      this.tryAgain = true;
+
       return;
     }
 
@@ -61,9 +81,6 @@ export class ConfigureChannelBtn implements EventHandler {
 
     div.append(btn);
 
-    const uploadInfo = document.querySelector(
-      "ytd-video-secondary-info-renderer #upload-info"
-    );
     uploadInfo?.insertAdjacentElement("afterend", div);
   }
 }
