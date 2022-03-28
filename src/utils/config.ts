@@ -158,6 +158,12 @@ export async function setShouldMuteAd(
   return getShouldMuteAd();
 }
 
+export async function getIsSkipSkippingEnabled(): Promise<boolean> {
+  const subscription = await getSubscription();
+
+  return !!subscription?.user;
+}
+
 export async function getChannelConfig(
   channelId: Scope
 ): Promise<ChannelConfig | BaseConfig | undefined> {
