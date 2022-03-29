@@ -78,10 +78,6 @@ const TEMPLATE = `
           makes the "Skip Ad" button visible, but the value can be as low as
           0, where you won't see any ads.
         </p>
-        <p class="pref-desc">
-          You can let ads play longer for you favorite YouTubers and skip
-          them quickly for other videos.
-        </p>
       </div>
       <input type="number" name="skipsecs" />
     </label>

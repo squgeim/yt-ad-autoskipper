@@ -25,7 +25,9 @@ const CSS = `
 
 .channel-logo {
   width: 3em;
+  aspect-ratio: 1;
   border-radius: 1.5em;
+  overflow: hidden;
 }
 
 .channel-pref-title {
@@ -38,7 +40,9 @@ const TEMPLATE = `
   <h2 class="channel-pref-title">
     <slot name="channel-pref-title"></slot>
   </h2>
-  <slot name="channel-logo"></slot>
+  <div class="channel-logo">
+    <slot name="channel-logo"></slot>
+  </div>
 </div>
 <slot name="channel-pref-form"></slot>
 `;
@@ -79,7 +83,7 @@ export class AdsChannelPref extends HTMLElement {
 
     this.innerHTML = `
       <slot slot="channel-pref-title">${channelName}</slot>
-      <img slot="channel-logo" class="channel-logo" src="${imageUrl}" alt="" />
+      <img slot="channel-logo" src="${imageUrl}" alt="" />
       <${AdsChannelPrefForm.elementName}
         slot="channel-pref-form"
         channel-id="${channelId}"

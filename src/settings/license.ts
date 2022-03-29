@@ -67,7 +67,12 @@ p.license-highlight {
 .license-highlight span {
   border-bottom: solid 0.7em orange;
   text-transform: uppercase;
-}`;
+}
+
+ul {
+  margin: 0;
+}
+`;
 
 const template = `
 <section class="license">
@@ -88,9 +93,15 @@ const template = `
     </p>
     <p>
       I only request 3 cups of coffee ☕️ per year to support the
-      development of this extension. Your support will unlock features such
-      as muting ads and configuring ad playback length that can also be
-      configured for your favorite YouTubers.
+      development of this extension.
+    </p>
+    <p>Your support will unlock features such as:
+      <ul>
+        <li>muting ads</li>
+        <li>button to end countdown if you want ad to continue playing</li>
+        <li>configuring ad playback length before it is skipped</li>
+        <li>custom configuration per YouTube channel</li>
+      </ul>
     </p>
     <p class="license-highlight">
       The original functionality of automatically skipping ads is and

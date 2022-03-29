@@ -3,7 +3,7 @@ import { ChannelConfig, getConfig, removeChannel } from "../utils/config";
 import { deepmerge } from "../utils/helpers";
 
 const CSS = `
-.pref-box {
+.pref-box, ul {
   margin-bottom: 1em;
   border-radius: 1em;
   background-color: var(--pref-box-bg);
@@ -60,7 +60,6 @@ const CSS = `
 }`;
 
 const TEMPLATE = `
-<ul class="pref-box"></ul>
 <slot name="empty-list">
   <div class="pref-box empty-channel-list">
     <p>You have not configured any channels yet!</p>
@@ -134,11 +133,12 @@ export class AdsChannelList extends HTMLElement {
 
     this.innerHTML = "";
 
+    const ul = this.shadowRoot.querySelector("ul") || document.createElement("ul");
+
     if (!this.state.channels?.length) {
       return;
     }
 
-    const ul = this.shadowRoot.querySelector("ul.pref-box");
     ul && (ul.innerHTML = "");
 
     for (const channel of this.state.channels) {
@@ -169,6 +169,7 @@ export class AdsChannelList extends HTMLElement {
       ul?.append(li);
     }
 
+    ul.parentElement || this.shadowRoot.prepend(ul);
     this.innerHTML = `<slot slot="empty-list"></slot>`;
   };
 }

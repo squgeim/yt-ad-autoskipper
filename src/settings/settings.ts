@@ -38,17 +38,17 @@ a:visited {
 
 .container h1, .container h2 {
   font-weight: normal;
+  padding: 0 1.5rem;
 }
 
 h2.title {
-  margin: 1em;
   font-size: 0.9em;
   opacity: 0.8;
   flex: 1;
   text-transform: uppercase;
 }
 
-.pref-desc {
+p {
   margin: 0;
   margin-top: 0.5em;
   font-size: 0.8em;
@@ -77,7 +77,7 @@ const template = `
     <div class="can-disable">
       <h2 class="title">
         Global Preferences
-        <p class="pref-desc">
+        <p>
           These preferences will be used for all videos unless there is a
           specific configuration for a YouTube channel defined below.
         </p>
@@ -87,9 +87,14 @@ const template = `
     <div class="can-disable">
       <h2 class="title">
         Channel Preferences
-        <p class="pref-desc">
+        <p>
           You can configure Ad-Skipper to have a different behavior in videos
           by your favourite YouTubers.
+        </p>
+        <p>
+          Did you know? YouTubers are paid 50% of the revenue from ads playing
+          on their videos. You can support your favorite YouTubers by letting
+          ads play longer on their channel.
         </p>
       </h2>
       <${AdsChannelList.elementName} />
@@ -220,6 +225,8 @@ class AdsSettings extends HTMLElement {
   attachListenerForPageChange = () => {
     const handlePageChange = async () => {
       const { page, pageProps } = await this.getPageFromStorage();
+
+      logger.debug("Handling page change: ", page, pageProps);
 
       this.state = {
         page,
