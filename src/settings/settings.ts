@@ -151,7 +151,10 @@ class AdsSettings extends HTMLElement {
   }
 
   set state(newState: Partial<State>) {
-    this._state = deepmerge<State>(this._state, newState);
+    this._state = {
+      ...this._state,
+      ...newState,
+    };
     this.render();
   }
 
@@ -235,7 +238,10 @@ class AdsSettings extends HTMLElement {
     };
 
     const handleMessage = (changes: Record<string, unknown>) => {
-      if ("page" in changes) {
+      if (
+        "page" in changes &&
+        "newValue" in (changes.page as Record<string, unknown>)
+      ) {
         handlePageChange();
       }
     };
