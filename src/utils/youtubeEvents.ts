@@ -69,7 +69,7 @@ mainLoop(async () => {
       cb(cbArg[0], cbArg[1]);
     });
   });
-}, 100);
+}, 200);
 
 export const YouTubeEvents = {
   addListener: (event: Events, cb: Callback): void => {

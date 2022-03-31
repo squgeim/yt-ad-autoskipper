@@ -21,7 +21,14 @@ export function clickSkipAdBtn(): void {
 export function clickMuteBtn(): void {
   logger.debug("click mute button.");
   const muteBtn = document.querySelector<HTMLElement>(".ytp-mute-button");
-  muteBtn && clickElem(muteBtn);
+
+  if (!muteBtn) {
+    logger.debug("mute button not present.");
+
+    return;
+  }
+
+  clickElem(muteBtn);
 }
 
 export function getChannelInfo(): {

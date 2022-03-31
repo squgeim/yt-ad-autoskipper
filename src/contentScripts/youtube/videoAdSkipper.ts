@@ -70,6 +70,7 @@ export class VideoAdSkipper implements EventHandler {
     const newCountdown = document.createElement("div");
     newCountdown.id = "yas_countdown";
     newCountdown.style.margin = "10px 0";
+    newCountdown.style.color = "var(--yt-spec-text-primary)";
     const link = document.createElement("a");
     link.href = "#";
     link.style.color = "inherit";
@@ -89,7 +90,7 @@ export class VideoAdSkipper implements EventHandler {
 
     if (!this.#enableSkipSkipping) {
       newCountdown.title =
-        "This feature is locked. Please go to extension settings to see how to enable it.";
+        "This feature is locked. Please go to extension settings to enable it.";
     }
 
     newCountdown.append(newText, link);
