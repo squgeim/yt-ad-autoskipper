@@ -10,8 +10,8 @@
     "build": "npm run copy && NODE_ENV=production npm run rollup",
     "rollup": "rollup --config rollup.config.js",
     "rollup:watch": "npm run rollup -- --watch",
-    "lint": "eslint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint src",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -24,24 +24,26 @@
   },
   "homepage": "https://github.com/squgeim/yt-ad-autoskipper#readme",
   "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.0.2",
+    "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-typescript": "^8.2.3",
-    "@types/chrome": "^0.0.148",
+    "@types/chrome": "^0.0.180",
     "@types/debounce": "^1.2.1",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
-    "@typescript-eslint/parser": "^4.28.0",
-    "eslint": "^7.29.0",
+    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "babel-jest": "^27.5.1",
+    "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "preact": "^10.5.14",
-    "prettier": "^2.3.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.5.1",
+    "prettier": "^2.6.0",
     "rollup": "^2.53.2",
     "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-replace": "^2.2.0",
     "typescript": "^4.3.4"
-  },
-  "dependencies": {
-    "deepmerge": "^4.2.2"
   }
 }

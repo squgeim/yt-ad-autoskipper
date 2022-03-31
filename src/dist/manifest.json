@@ -12,6 +12,14 @@
       "js":["./youtube.js"],
       "run_at": "document_end",
       "all_frames": true
+    },
+    {
+      "matches": [
+        "http://localhost:5000/*",
+        "https://ad-auto-skipper.web.app/*"
+      ],
+      "js": ["./adskipper.js"],
+      "run_at": "document_end"
     }
   ],
   "background": {
