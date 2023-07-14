@@ -13,6 +13,7 @@ export function clickSkipAdBtn(): void {
   const elems = getElementsByClassNames([
     "videoAdUiSkipButton", // Old close ad button
     "ytp-ad-skip-button ytp-button", // New close ad button
+    "ytp-ad-skip-button-modern ytp-button", // Modern close ad button
   ]);
   logger.debug("clicking on elems: ", elems);
   elems.forEach((el) => clickElem(el));
