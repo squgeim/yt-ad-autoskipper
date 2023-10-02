@@ -59,6 +59,7 @@ export class ConfigureChannelBtn implements EventHandler {
     btn.style.lineHeight = "1.5em";
     btn.style.cursor = "pointer";
     btn.style.fontSize = "1.2em";
+    btn.style.color = "var(--yt-spec-text-primary, black)";
     btn.style.borderBottom = "1px solid var(--yt-spec-text-primary, black)";
     btn.style.marginBottom = "1em";
 
