@@ -13,7 +13,7 @@ export class ConfigureChannelBtn implements EventHandler {
       this.handleLocation();
     });
     YouTubeEvents.addListener(Events.tick, () => {
-      if (this.tryAgain) {
+      if (!this.hasButton()) {
         logger.debug("trying to create config button again.");
         this.tryAgain = false;
         this.createButton();
@@ -30,20 +30,19 @@ export class ConfigureChannelBtn implements EventHandler {
     this.createButton();
   }
 
-  private createButton() {
-    const hasButton = document.querySelector("#yas_config_channel_btn");
+  private hasButton() {
+    return !!document.querySelector("#yas_config_channel_btn");
+  }
 
-    if (hasButton) {
+  private createButton() {
+    if (this.hasButton()) {
       return;
     }
 
-    const uploadInfo = document.querySelector(
-      "ytd-video-secondary-info-renderer #upload-info"
-    );
+    const related = document.querySelector("#related");
 
-    if (!uploadInfo) {
+    if (!related) {
       logger.debug("Could not palce config button. Will try again next tick.");
-      this.tryAgain = true;
 
       return;
     }
@@ -51,19 +50,18 @@ export class ConfigureChannelBtn implements EventHandler {
     const div = document.createElement("div");
     div.style.display = "flex";
     div.style.alignItems = "center";
-    div.style.marginRight = "3px";
+    div.style.justifyContent = "center";
 
-    const btn = document.createElement("button");
+    const btn = document.createElement("a");
     btn.id = "yas_config_channel_btn";
     btn.title = "Configure ad skipping for this channel";
-    btn.innerHTML = `
-      <img height="100%" src="https://github.com/squgeim/yt-ad-autoskipper/raw/master/src/dist/logo.png" alt="" />
-    `;
-    btn.style.height = "36px";
-    btn.style.backgroundColor = "white";
-    btn.style.border = "1px solid steelblue";
-    btn.style.borderRadius = "2px";
+    btn.innerHTML = `Configure Ads for this channel`;
+    btn.style.lineHeight = "1.5em";
     btn.style.cursor = "pointer";
+    btn.style.fontSize = "1.2em";
+    btn.style.color = "var(--yt-spec-text-primary, black)";
+    btn.style.borderBottom = "1px solid var(--yt-spec-text-primary, black)";
+    btn.style.marginBottom = "1em";
 
     btn.onclick = () => {
       const { channelId, channelName, imageUrl } = getChannelInfo();
@@ -81,6 +79,6 @@ export class ConfigureChannelBtn implements EventHandler {
 
     div.append(btn);
 
-    uploadInfo?.insertAdjacentElement("afterend", div);
+    related.insertAdjacentElement("beforebegin", div);
   }
 }
