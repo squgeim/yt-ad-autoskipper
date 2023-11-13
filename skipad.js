@@ -3,6 +3,7 @@
     'videoAdUiSkipButton', // Old close ad button
     'ytp-ad-skip-button ytp-button', // New close ad button
     'ytp-ad-overlay-close-button', // Close overlay button
+    'ytp-ad-skip-button-modern ytp-button', // Modern close ad button
   ];
 
   var timeoutId;
