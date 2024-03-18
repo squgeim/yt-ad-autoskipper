@@ -7,7 +7,7 @@ export class BannerAdRemover implements EventHandler {
     // Banner ads are removed as soon as they appear.
     YouTubeEvents.addListener(Events.tick, () => {
       getElementsByClassNames([
-        "ytp-ad-overlay-close-button", // Close overlay button
+        "ytp-skip-ad-button", // Close overlay button
       ]).forEach((elem) => clickElem(elem));
     });
   }
