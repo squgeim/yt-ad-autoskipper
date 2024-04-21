@@ -28,7 +28,11 @@ mainLoop(async () => {
   const adPlaying =
     document
       .querySelector(".ytp-ad-visit-advertiser-button")
-      ?.getAttribute("aria-label") ?? undefined;
+      ?.getAttribute("aria-label") ??
+    document
+      .querySelector(".ytp-ad-module [aria-label]")
+      ?.getAttribute("aria-label") ??
+    undefined;
   const eventsToCall: Events[] = [];
   const cbArg = [
     { ad: currentAd, location: currentLoc },
