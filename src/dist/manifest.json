@@ -3,7 +3,7 @@
   "short_name": "ad skipper",
   "description":"YouTube Ad Skipper is an extension that auto skips ads after YouTube provides a skip ad button. It does not block an ad.",
   "manifest_version": 3,
-  "version":"2.0.1",
+  "version":"2.0.2",
   "author":"Shreya Dahal",
   "homepage_url": "https://github.com/squgeim/yt-ad-autoskipper",
   "content_scripts":[
