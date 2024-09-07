@@ -1,6 +1,6 @@
 {
   "name": "yt-ad-autoskipper",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "An extension that auto skips ads after YouTube provides a skip ad button. It does not block an ad.",
   "main": "index.js",
   "scripts": {
