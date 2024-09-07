@@ -1,25 +1,31 @@
 {
-  "name":"YouTube Ad Auto-skipper",
+  "name": "YouTube Ad Auto-skipper",
   "short_name": "ad skipper",
-  "description":"YouTube Ad Skipper is an extension that auto skips ads after YouTube provides a skip ad button. It does not block an ad.",
+  "description": "YouTube Ad Skipper is an extension that auto skips ads after YouTube provides a skip ad button. It does not block an ad.",
   "manifest_version": 3,
-  "version":"2.0.2",
-  "author":"Shreya Dahal",
+  "version": "2.0.3",
+  "author": "Shreya Dahal",
   "homepage_url": "https://github.com/squgeim/yt-ad-autoskipper",
-  "content_scripts":[
+  "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],
-      "js":["./youtube.js"],
-      "run_at": "document_end",
-      "all_frames": true
+      "js": ["./youtube.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["./youtube_override.js"],
+      "all_frames": true,
+      "run_at": "document_start",
+      "world": "MAIN"
     },
     {
       "matches": [
-        "http://localhost:5000/*",
+        "http://localhost:5002/*",
         "https://ad-auto-skipper.web.app/*"
       ],
-      "js": ["./adskipper.js"],
-      "run_at": "document_end"
+      "js": ["./adskipper.js"]
     }
   ],
   "background": {
@@ -29,16 +35,11 @@
     "default_title": "Configure Ad Auto Skipper"
   },
   "options_page": "pages/settings.html",
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "icons": {
     "128": "logo.png"
   },
   "externally_connectable": {
-    "matches": [
-      "http://localhost:5000/*",
-      "https://ad-auto-skipper.web.app/*"
-    ]
+    "matches": ["http://localhost:5002/*", "https://ad-auto-skipper.web.app/*"]
   }
 }

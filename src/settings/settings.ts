@@ -6,7 +6,6 @@ import { AuthUser } from "../utils/types";
 import { AdsChannelPref } from "./channelPref";
 import { AdsChannelPrefForm } from "./channelPrefForm";
 import { AdsLicense } from "./license";
-import { deepmerge } from "../utils/helpers";
 
 type State = {
   user: AuthUser | null;
@@ -55,6 +54,7 @@ p {
   opacity: 0.5;
   text-transform: none;
 }
+
 .pref-disabled {
   opacity: 0.5;
   pointer-events: none;

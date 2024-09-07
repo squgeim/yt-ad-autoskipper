@@ -11,7 +11,7 @@ const commonPlugins = [
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       "process.env.DEBUG": JSON.stringify(process.env.DEBUG),
     },
-    preventAssignment: true
+    preventAssignment: true,
   }),
   commonjs(),
   typescript(),
@@ -22,6 +22,14 @@ export default [
     input: "src/contentScripts/youtube/index.ts",
     output: {
       file: "build/youtube.js",
+      format: "cjs",
+    },
+    plugins: [...commonPlugins],
+  },
+  {
+    input: "src/contentScripts/youtube/overrideEvent.ts",
+    output: {
+      file: "build/youtube_override.js",
       format: "cjs",
     },
     plugins: [...commonPlugins],
