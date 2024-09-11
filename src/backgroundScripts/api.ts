@@ -3,7 +3,7 @@ import { logger } from "../utils/logger";
 const BASE_URL =
   process.env.NODE_ENV === "production"
     ? "https://ad-auto-skipper.web.app"
-    : "http://localhost:5000";
+    : "http://localhost:5002";
 
 export async function fetchSubscriptionForUser(
   token: string
