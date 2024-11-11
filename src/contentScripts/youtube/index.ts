@@ -13,8 +13,6 @@ function main() {
     return;
   }
 
-  YouTubeEvents.startLoop();
-
   chrome.runtime.sendMessage({
     type: VERIFY_SUBSCRIPTION,
   });
@@ -23,6 +21,8 @@ function main() {
   new AdMuter().setupListeners();
   new ConfigureChannelBtn().setupListeners();
   new BannerAdRemover().setupListeners();
+
+  YouTubeEvents.startLoop();
 }
 
 main();
