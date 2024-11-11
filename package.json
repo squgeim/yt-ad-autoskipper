@@ -6,8 +6,8 @@
   "scripts": {
     "copy": "rm -rf build && cp -R src/dist build && cp LICENSE.md build",
     "dev": "NODE_ENV=development npm run rollup:watch",
-    "package": "cd build && zip -r yt-ad-autoskipper.zip ./",
-    "build": "npm run copy && NODE_ENV=production npm run rollup",
+    "package": "cd build && zip -r yt-ad-autoskipper-$npm_package_version.zip ./",
+    "build": "npm run copy && NODE_ENV=production npm run rollup && npm run package && mv build/*.zip .",
     "rollup": "rollup --config rollup.config.js",
     "rollup:watch": "npm run rollup -- --watch",
     "lint": "eslint src",
