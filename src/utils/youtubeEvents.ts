@@ -31,6 +31,9 @@ const startMainLoop = () => {
       document
         .querySelector(".ytp-ad-visit-advertiser-button")
         ?.getAttribute("aria-label") ??
+      document
+        .querySelector(".ytp-visit-advertiser-link")
+        ?.getAttribute("aria-label") ??
       document.querySelector(".ytp-ad-badge")?.textContent ??
       undefined;
     const eventsToCall: Events[] = [];
@@ -46,6 +49,9 @@ const startMainLoop = () => {
     }
 
     if (currentAd !== adPlaying) {
+      logger.debug("currentAd", currentAd);
+      logger.debug("adPlaying", adPlaying);
+
       if (adPlaying) {
         // a new ad has started;
         eventsToCall.push(Events.adPlayStarted);
