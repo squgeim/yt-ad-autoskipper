@@ -77,7 +77,6 @@ export async function loginSuccess(
     const res = await cancelSubscription(user.stsTokenManager.accessToken);
 
     if (res.success) {
-      await chrome.storage.local.remove("subscription");
       chrome.runtime.openOptionsPage();
       await chrome.tabs.remove(tab.id as number);
     }
